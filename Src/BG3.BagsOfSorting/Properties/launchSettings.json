@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Export Atlas Icons": {
+      "commandName": "Project",
+      "commandLineArgs": "--export-atlas-icons"
+    },
+    "Generate Bags": {
+      "commandName": "Project",
+      "commandLineArgs": "--generate-bags"
+    },
+    "Add Bag": {
+      "commandName": "Project",
+      "commandLineArgs": "--add-bag"
+    }
+  }
+}

@@ -1,0 +1,1 @@
+BG3.BagsOfSorting.exe --add-bag

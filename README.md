@@ -1,0 +1,105 @@
+# Bags of Sorting
+A command-line tool to generate custom inventory bags for Baldur's Gate 3.
+
+## Installation
+> **NOTE!** Currently, the tool will only work on Windows!
+
+Download the latest release from [GitHub](https://github.com/LennardF1989/BG3-BagsOfSorting/releases) and extract it somewhere easy to find.
+
+You will also need the [Pouch of Wonders](https://www.nexusmods.com/baldursgate3/mods/1368/)-mod (recommended) or another method to grant yourself items in-game.
+
+## Usage
+> **NOTE!** Currently, the tool only has a command-line interface. Luckily, even less tech-savvy users should be able to use it. Do keep in mind, there is little to no error-checking, so be prepared for exceptions when you do things wrong.
+
+The following commands are available:
+- `--export-atlas-icons` will parse all .LSX files it can find under `Content\Stock`, and try to extract icons from the .DDS files to `Output\Icons`.
+- `--generate-bags` will read the `Content\Bags.json` file and use that information to generate a `BagsOfSorting.pak` in `Output\Bags`.
+- `--add-bag` will create a new `Content\Bags.json` with 1 empty bag, or will open an existing `Content\Bags.json` and add 1 empty bag to it. Added for convenience, as it removes the need of having to manually generate GUIDs.
+- 
+### First-time use
+Run the command `--export-atlas-icons` to prepare your workspace. Then run `--add-bag` to generate an empty `Content\Bags.json`.
+
+### Adding bags
+Run the command `--add-bag` to add an additional bag to your `Content\Bags.json`.
+
+Open the JSON-file in an editor (for example Visual Studio code, but even Notepad would be fine), and adjust everything accordingly as per example below.
+
+```json
+{
+    "MapKey": "98f71782-01f7-4e12-b142-b82d30ec98fd",
+    "DisplayName": "Story Pouch",
+    "Description": "Story Description",
+    "TechnicalDescription": "Story Technical Description",
+    "ItemIcon": {
+        "Name": "Item_LOOT_SCROLL_FireBolt",
+        "Custom": false,
+        "Generate": true
+    },
+    "TooltipIcon": {
+        "Name": "Item_LOOT_SCROLL_FireBolt",
+        "Custom": false,
+        "Generate": true
+    },
+    "Color": "Orange",
+    "Amount": 1
+}
+```
+
+`MapKey` is required and should always be a unqiue GUID.
+
+`DisplayName`, `Description` and `TechnicalDescription` are optional. When left empty, the game will show the description of a normal Pouch.
+
+`ItemIcon` is the icon shown in the inventory. 
+- `Name` can be set to any filename (without the extension) found under `Output\Icons`. 
+- When `Custom` is set to `true`, the path `Content\Custom` is used instead and a 64x64 PNG-file is expected to be found. 
+- When `Generate` is set to `true`, the icon set under `Name` will shrunk to two-thirds of its size and be combined with the icon of a normal pouch.
+- 
+
+`TooltipIcon` works exactly the same as `ItemIcon`. However, it is recommended use a 380x380 PNG-file when `Custom` is set to `true` and `Generate` is set to `false`. This will give the best results in-game.
+
+`Color` determines how the item is presented in-game. The following values are available:
+- None
+- Green
+- Blue
+- Pink
+- Gold
+- Orange
+
+`Amount` can be set to any value and determines how many bags will be available in the Pouch of Wonders.
+
+## Generating the PAK
+Run the command `--generate-bags` and the resulting `BagsOfSorting.pak` can be found in `Output\Bags`. The PAK-file will contain a copy of your `Bags.json`, so you are always able the regenerate the exact same file again. This is important, because your save-file can get corrupted if any used bag is no longer available.
+
+## Installing the PAK
+The PAK-file has to be dropped directly into `Baldurs Gate 3\Data` and will just work, even on existing playthoughs.
+
+## Getting access to your custom bags
+As mentioned earlier, the easiest method would be to use the [Pouch of Wonders]([Pouch of Wonders](https://www.nexusmods.com/baldursgate3/mods/1368/)), as that was purposely created for this tool as a replacement for a lot of similar mods. 
+
+## Additional functionality: Add more items to the Pouch of Wonders
+It's possible to include other items in the Pouch of Wonders than just the custom bags using this tool.
+
+Inside your `Content\Bags.json` update the `AdditionalTreasures` accordingly, for example:
+```json
+"AdditionalTreasures": {
+    "T_TUT_Chest_Potions": 1,
+    "I_OBJ_Tool_Shovel": 2
+}
+```
+
+This will give you access to all items in the Tutorial Chest (*) and 2 shovels.
+
+\* This is which is a method a lot of mods are using now. Do notice the `T_`-prefix to reference a specific `TreasureTable` instead of an `Item`, which uses the `I_`-prefix instead.
+
+## Additional functionality: Flip the generated icons
+It is possible to flip the generated icons from left to right by setting `AlignGeneratedItemIconsRight` to `true` in the `Content\Bags.json`. It is however not recommended to do this when you use generated icons. This is because in-game the amount of items in a pouch is shown the upper-right corner, and hide the visual cue to Item icons are meant to provide.
+
+## License
+License is purposely set to LGPL-2.1 to encourage pull requests with useful changes, while still allowing the tool to be used in other solutions that don't share the same license. Just be sure to give credits where credits are due.
+
+## Dependencies
+- Icons from Baldur's Gate 3 itself, but they are included under Fair Use for your convenience.
+- [.NET 6 version](https://github.com/LennardF1989/lslib/tree/dotnet6) of [LSLib](https://github.com/Norbyte/lslib) to create LXS-, LOCA- and PAK-files.
+- [Pfim](https://github.com/nickbabcock/Pfim) to read from DDS-files.
+- [Texconv](https://github.com/Microsoft/DirectXTex/) to convert to DDS-files.
+- [ImageSharp](https://github.com/SixLabors/ImageSharp) to manipulate the images.

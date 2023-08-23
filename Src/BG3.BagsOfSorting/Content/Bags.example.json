@@ -1,0 +1,125 @@
+{
+  "Bags": [
+    {
+      "MapKey": "122aec10-d136-44a4-901b-e71e42f38f79",
+      "DisplayName": "Normal Pouch",
+      "ItemIcon": {
+        "Name": "Item_LOOT_Bag_Blackpowder"
+      }
+    },
+    {
+      "MapKey": "9590d0a1-f2b7-4b99-9a7f-cfa625fc8a7d",
+      "DisplayName": "Scroll Pouch",
+      "ItemIcon": {
+        "Name": "Item_LOOT_SCROLL_FireBolt",
+        "Custom": false,
+        "Generate": true
+      }
+    },
+    {
+      "MapKey": "f13e0b24-4a79-4fcf-9c9f-5a89a4e0119b",
+      "DisplayName": "Weird Pouch",
+      "ItemIcon": {
+        "Name": "Item_LOOT_Bag_Blackpowder"
+      },
+      "TooltipIcon": {
+        "Name": "Item_LOOT_SCROLL_FireBolt"
+      }
+    },
+    {
+      "MapKey": "3f1b2eba-a1d0-431e-9c76-3364ba38dfae",
+      "DisplayName": "Uncommon Pouch",
+      "Description": "Uncommon Pouch Description",
+      "TechnicalDescription": "Uncommon Pouch Technical Description",
+      "ItemIcon": {
+        "Name": "Icon_CustomButNotReally",
+        "Custom": true,
+        "Generate": true
+      },
+      "TooltipIcon": {
+        "Name": "Icon_CustomButNotReally",
+        "Custom": true,
+        "Generate": true
+      },
+      "Color": "Green",
+      "Amount": 4
+    },
+    {
+      "MapKey": "6c756541-6ae5-42fb-b66d-f96953195eef",
+      "DisplayName": "Rare Pouch",
+      "Description": "Rare Pouch Description",
+      "TechnicalDescription": "Rare Pouch Technical Description",
+      "ItemIcon": {
+        "Name": "Icon_CustomButNotReally",
+        "Custom": true,
+        "Generate": true
+      },
+      "TooltipIcon": {
+        "Name": "Icon_CustomButNotReally",
+        "Custom": true,
+        "Generate": true
+      },
+      "Color": "Blue",
+      "Amount": 3
+    },
+    {
+      "MapKey": "77b95245-3c0e-4c9d-a65a-2e97c5c1d9a9",
+      "DisplayName": "Very Rare Pouch",
+      "Description": "Very Rare Pouch Description",
+      "TechnicalDescription": "Very Rare Pouch Technical Description",
+      "ItemIcon": {
+        "Name": "Icon_CustomButNotReally",
+        "Custom": true,
+        "Generate": true
+      },
+      "TooltipIcon": {
+        "Name": "Icon_CustomButNotReally",
+        "Custom": true,
+        "Generate": true
+      },
+      "Color": "Pink",
+      "Amount": 2
+    },
+    {
+      "MapKey": "6a74e528-d877-413a-bac5-2ececd9980ea",
+      "DisplayName": "Legendary Pouch",
+      "Description": "Legendary Pouch Description",
+      "TechnicalDescription": "Legendary Pouch Technical Description",
+      "ItemIcon": {
+        "Name": "Icon_CustomButNotReally",
+        "Custom": true,
+        "Generate": true
+      },
+      "TooltipIcon": {
+        "Name": "Icon_CustomButNotReally",
+        "Custom": true,
+        "Generate": true
+      },
+      "Color": "Gold",
+      "Amount": 1
+    },
+    {
+      "MapKey": "98f71782-01f7-4e12-b142-b82d30ec98fd",
+      "DisplayName": "Story Pouch",
+      "Description": "Story Description",
+      "TechnicalDescription": "Story Technical Description",
+      "ItemIcon": {
+        "Name": "Icon_CustomButNotReally",
+        "Custom": true,
+        "Generate": true
+      },
+      "TooltipIcon": {
+        "Name": "Icon_CustomButNotReally",
+        "Custom": true,
+        "Generate": true
+      },
+      "Color": "Orange",
+      "Amount": 1
+    }
+  ],
+  "AdditionalTreasures": {
+    "T_TUT_Chest_Potions": 1,
+    "I_OBJ_Tool_Shovel": 2
+  },
+  "AlignGeneratedItemIconsRight": false
+}

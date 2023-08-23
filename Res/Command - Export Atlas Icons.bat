@@ -1,0 +1,1 @@
+BG3.BagsOfSorting.exe --export-atlas-icons
