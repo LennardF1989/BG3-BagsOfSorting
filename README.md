@@ -30,6 +30,7 @@ Open the JSON-file in an editor (for example Visual Studio code, but even Notepa
     "DisplayName": "Story Pouch",
     "Description": "Story Description",
     "TechnicalDescription": "Story Technical Description",
+    "AutoPickupCondition": null,
     "ItemIcon": {
         "Name": "Item_LOOT_SCROLL_FireBolt",
         "Custom": false,
@@ -45,15 +46,16 @@ Open the JSON-file in an editor (for example Visual Studio code, but even Notepa
 }
 ```
 
-`MapKey` is required and should always be a unqiue GUID.
+`MapKey` is required and should always be a unique GUID.
 
 `DisplayName`, `Description` and `TechnicalDescription` are optional. When left empty, the game will show the description of a normal Pouch.
+
+`AutoPickupCondition` allows you to script a way to automatically add items to a particular bag. The game uses this for camp supplies, alchemy items, etcetera. I couldn't really find a useful way to make it work for scrolls (for example), without resorting to manually adding tags to all those (base) items.
 
 `ItemIcon` is the icon shown in the inventory. 
 - `Name` can be set to any filename (without the extension) found under `Output\Icons`. 
 - When `Custom` is set to `true`, the path `Content\Custom` is used instead and a 64x64 PNG-file is expected to be found. 
 - When `Generate` is set to `true`, the icon set under `Name` will shrunk to two-thirds of its size and be combined with the icon of a normal pouch.
-- 
 
 `TooltipIcon` works exactly the same as `ItemIcon`. However, it is recommended use a 380x380 PNG-file when `Custom` is set to `true` and `Generate` is set to `false`. This will give the best results in-game.
 
