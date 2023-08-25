@@ -1,0 +1,136 @@
+﻿<Window x:Class="BG3.BagsOfSorting.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Baldur's Gate 3 - Bags of Sorting" 
+        Height="450" 
+        Width="800"
+        WindowStartupLocation="CenterScreen"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <TabControl>
+        <TabItem Header="Bags">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <DataGrid
+                    Name="BagsDataGrid"
+                    Margin="5" 
+                    ItemsSource="{Binding Bags}"
+                    SelectionMode="Single" 
+                    IsReadOnly="True"
+                    SelectedItem="{Binding SelectedBag}"/>
+                <Grid Grid.Column="0" Grid.Row="1" Margin="5,0,5,0">
+                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <CheckBox Content="Align Generated Item Icons Right" IsChecked="{Binding AlignGeneratedItemIconsRight}"/>
+                    </StackPanel>
+                    <StackPanel HorizontalAlignment="Right">
+                        <Button Content="Open application directory" Padding="5" Click="OpenApplicationDirectory" />
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Column="0" Grid.Row="2" Margin="5">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <Button Content="Add Bag" Padding="5" Margin="0,0,5,0" Click="AddBag"/>
+                        <Button Content="Remove Bag" Padding="5" Click="RemoveBag" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Export Icons" Padding="5" Margin="0,0,5,0" Click="ExportIcons"/>
+                        <Button Content="Generate Bags" Padding="5" Click="GenerateBags"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Column="1" RowSpan="3" Margin="5" IsEnabled="{Binding IsBagSelected}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Column="0" Grid.Row="0" Content="MapKey" />
+                    <TextBox Grid.Column="1" Grid.Row="0" IsReadOnly="True" Margin="0,0,0,5" Text="{Binding SelectedBag.Bag.MapKey}" Background="LightGray"/>
+                    <Label Grid.Column="0" Grid.Row="1" Content="Name"/>
+                    <TextBox Grid.Column="1" Grid.Row="1" IsReadOnly="True" Margin="0,0,0,5" Text="{Binding SelectedBag.Bag.Name}" Background="LightGray" />
+                    <Label Grid.Column="0" Grid.Row="2" Content="Display Name"/>
+                    <TextBox Grid.Column="1" Grid.Row="2" Margin="0,0,0,5" Text="{Binding SelectedBag.Bag.DisplayName}" />
+                    <Label Grid.Column="0" Grid.Row="3" Content="Description"/>
+                    <TextBox Grid.Column="1" Grid.Row="3" Margin="0,0,0,5" MinLines="2" Text="{Binding SelectedBag.Bag.Description}" />
+                    <Label Grid.Column="0" Grid.Row="4" Content="Technical Description"/>
+                    <TextBox Grid.Column="1" Grid.Row="4" Margin="0,0,0,5" MinLines="2" Text="{Binding SelectedBag.Bag.TechnicalDescription}" />
+                    <Label Grid.Column="0" Grid.Row="5" Content="Auto Pickup Condition"/>
+                    <TextBox Grid.Column="1" Grid.Row="5" Margin="0,0,0,5" MinLines="2" Text="{Binding SelectedBag.Bag.AutoPickupCondition}" />
+                    <Label Grid.Column="0" Grid.Row="6" Content="Color"/>
+                    <ComboBox Grid.Column="1" Grid.Row="6" Margin="0,0,0,5" 
+                              ItemsSource="{Binding BagColors}"
+                              SelectedItem="{Binding SelectedBag.Bag.Color, Converter={StaticResource EnumToStringConverter}}"
+                              />
+                    <Label Grid.Column="0" Grid.Row="7" Content="Item Icon"/>
+                    <StackPanel Grid.Column="1" Grid.Row="7" Margin="0,0,0, 5">
+                        <DockPanel LastChildFill="True" Margin="0,0,0,5">
+                            <Button DockPanel.Dock="Right" Content="Browse..." Click="BrowseItemIcon" />
+                            <TextBox Margin="0,0,5,0" Text="{Binding SelectedBag.Bag.ItemIcon.Name }"/>
+                        </DockPanel>
+                        <CheckBox Content="Custom" Margin="0,0,0,5" IsChecked="{Binding SelectedBag.Bag.ItemIcon.Custom}" />
+                        <CheckBox Content="Generate" IsChecked="{Binding SelectedBag.Bag.ItemIcon.Generate}" />
+                    </StackPanel>
+                    <Label Grid.Column="0" Grid.Row="8" Content="Tooltip Icon"/>
+                    <StackPanel Grid.Column="1" Grid.Row="8" Margin="0,0,0,5">
+                        <DockPanel LastChildFill="True" Margin="0,0,0,5">
+                            <Button DockPanel.Dock="Right" Content="Browse..." Click="BrowseToolTipIcon" />
+                            <TextBox Margin="0,0,5,0" Text="{Binding SelectedBag.Bag.TooltipIcon.Name}"/>
+                        </DockPanel>
+                        <CheckBox Content="Custom" Margin="0,0,0,5" IsChecked="{Binding SelectedBag.Bag.TooltipIcon.Custom}" />
+                        <CheckBox Content="Generate" IsChecked="{Binding SelectedBag.Bag.TooltipIcon.Generate}" />
+                    </StackPanel>
+                    <Label Grid.Column="0" Grid.Row="9" Content="Amount"/>
+                    <TextBox Grid.Column="1" Grid.Row="9" Margin="0,0,0,5" Text="{Binding SelectedBag.Bag.Amount}" />
+                </Grid>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Additional Treasures">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <DataGrid Margin="5" 
+                          ItemsSource="{Binding AdditionalTreasures}"
+                          SelectionMode="Single" 
+                          IsReadOnly="True"
+                          SelectedItem="{Binding SelectedAdditionalTreasure}"/>
+                <Grid Grid.Row="1">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="5" IsEnabled="{Binding IsAdditionalTreasureSelected}">
+                        <Label Content="Name" Margin="0,0,5,0" />
+                        <TextBox Width="200" Margin="0,0,5,0" Text="{Binding SelectedAdditionalTreasure.Name}" />
+                        <Label Content="Type" Margin="0,0,5,0" />
+                        <ComboBox ItemsSource="{Binding TreasureTypes}"
+                                  SelectedItem="{Binding SelectedAdditionalTreasure.Type, Converter={StaticResource EnumToStringConverter}}" 
+                                  Width="100" />
+                        <Label Content="Amount" Margin="0,0,5,0" />
+                        <TextBox Width="100" Text="{Binding SelectedAdditionalTreasure.Amount}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
+                        <Button Content="Add Treasure" Margin="0,0,5,0" Click="AddAdditionalTreasure" />
+                        <Button Content="Remove Treasure" Click="RemoveAdditionalTreasure" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</Window>

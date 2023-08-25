@@ -9,7 +9,7 @@ Download the latest release from [GitHub](https://github.com/LennardF1989/BG3-Ba
 You will also need the [Pouch of Wonders](https://www.nexusmods.com/baldursgate3/mods/1368/)-mod (recommended) or another method to grant yourself items in-game.
 
 ## Usage
-> **NOTE!** Currently, the tool only has a command-line interface. Luckily, even less tech-savvy users should be able to use it. Do keep in mind, there is little to no error-checking, so be prepared for exceptions when you do things wrong.
+> **NOTE!** Currently, the tool supports both a GUI and a command-line interface. Less tech-savvy users should just use the GUI. The GUI is a verbatim implementation of the instructions below, so please read them to understand what everything does.
 
 The following commands are available:
 - `--export-atlas-icons` will parse all .LSX files it can find under `Content\Stock`, and try to extract icons from the .DDS files to `Output\Icons`.

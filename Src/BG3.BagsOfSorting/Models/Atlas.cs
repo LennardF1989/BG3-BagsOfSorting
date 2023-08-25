@@ -1,4 +1,4 @@
-﻿namespace BG3.BagsOfSorting
+﻿namespace BG3.BagsOfSorting.Models
 {
     public class Atlas
     {

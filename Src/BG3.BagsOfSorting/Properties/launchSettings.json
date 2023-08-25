@@ -11,6 +11,10 @@
     "Add Bag": {
       "commandName": "Project",
       "commandLineArgs": "--add-bag"
+    },
+    "GUI": {
+      "commandName": "Project",
+      "commandLineArgs": ""
     }
   }
 }

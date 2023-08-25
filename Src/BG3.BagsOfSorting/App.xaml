@@ -1,0 +1,9 @@
+﻿<Application x:Class="BG3.BagsOfSorting.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converter="clr-namespace:BG3.BagsOfSorting.Converter"
+             StartupUri="/Views/MainWindow.xaml">
+    <Application.Resources>
+        <converter:EnumToStringConverter x:Key="EnumToStringConverter"/>
+    </Application.Resources>
+</Application>
