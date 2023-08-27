@@ -20,6 +20,12 @@
     <ApplicationDefinition Remove="App.xaml" />
     <Content Include="Icon.ico" />
     <Page Include="App.xaml" />
+    <None Remove="Resources\folder_explore.png" />
+    <None Remove="Resources\images.png" />
+    <None Remove="Resources\package_go.png" />
+    <Resource Include="Resources\folder_explore.png" />
+    <Resource Include="Resources\images.png" />
+    <Resource Include="Resources\package_go.png" />
   </ItemGroup>
 
   <ItemGroup>

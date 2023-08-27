@@ -14,9 +14,10 @@ namespace BG3.BagsOfSorting.Services
 
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
                 log = CLIMethods.GetLog();
+                log.Add($"[Fatal Error] Unhandled exception: {ex}");
 
                 return false;
             }
@@ -34,9 +35,10 @@ namespace BG3.BagsOfSorting.Services
 
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
                 log = CLIMethods.GetLog();
+                log.Add($"[Fatal Error] Unhandled exception: {ex}");
 
                 return false;
             }

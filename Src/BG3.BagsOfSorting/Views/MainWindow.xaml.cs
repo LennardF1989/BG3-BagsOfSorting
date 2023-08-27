@@ -9,6 +9,7 @@ using BG3.BagsOfSorting.Models;
 using BG3.BagsOfSorting.Services;
 using BG3.BagsOfSorting.ViewModels;
 using Microsoft.Win32;
+using static BG3.BagsOfSorting.ViewModels.AdditionalTreasureViewModel;
 
 namespace BG3.BagsOfSorting.Views
 {
@@ -71,12 +72,39 @@ namespace BG3.BagsOfSorting.Views
             });
 
             AdditionalTreasures = new ObservableCollection<AdditionalTreasureViewModel>();
+            foreach (var kvp in bagConfiguration.AdditionalTreasures)
+            {
+                var prefix = kvp.Key[..2];
+
+                var name = kvp.Key;
+                var type = EType.None;
+
+                switch (prefix)
+                {
+                    case "I_":
+                        name = kvp.Key[2..];
+                        type = EType.Item;
+                        break;
+
+                    case "T_":
+                        name = kvp.Key[2..];
+                        type = EType.TreasureTable;
+                        break;
+                }
+
+                AdditionalTreasures.Add(new AdditionalTreasureViewModel
+                {
+                    DisplayName = name,
+                    Type = type,
+                    Amount = kvp.Value.GetValue<int>()
+                });
+            }
 
             AlignGeneratedItemIconsRight = bagConfiguration.AlignGeneratedItemIconsRight;
 
             BagColors = new ObservableCollection<string>(Enum.GetNames(typeof(BagConfiguration.EColor)));
 
-            TreasureTypes = new ObservableCollection<string>(Enum.GetNames(typeof(AdditionalTreasureViewModel.EType)));
+            TreasureTypes = new ObservableCollection<string>(Enum.GetNames(typeof(EType)));
 
             InitializeComponent();
 
@@ -135,14 +163,20 @@ namespace BG3.BagsOfSorting.Views
             Bags.Remove(SelectedBag);
         }
 
-        private void OpenApplicationDirectory(object sender, RoutedEventArgs e)
+        private void OpenContentDirectory(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer", Path.GetFullPath(Directory.GetCurrentDirectory()));
+            Process.Start("explorer", Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Content")));
         }
 
-        private void GenerateBags(object sender, RoutedEventArgs e)
+        private void OpenOutputDirectory(object sender, RoutedEventArgs e)
+        {
+            Process.Start("explorer", Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Output")));
+        }
+
+        private void GeneratePAK(object sender, RoutedEventArgs e)
         {
             _selectedBag?.Update();
+            _selectedAdditionalTreasure?.Update();
 
             var result = MessageBox.Show(
                 this,
@@ -273,7 +307,7 @@ namespace BG3.BagsOfSorting.Views
         {
             var result = SelectedAdditionalTreasure != null && MessageBox.Show(
                 this,
-                $"Are you sure you want to remove '{SelectedAdditionalTreasure.Name}'?",
+                $"Are you sure you want to remove '{SelectedAdditionalTreasure.DisplayName}'?",
                 "Remove Additional Treasure",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question
@@ -314,9 +348,7 @@ namespace BG3.BagsOfSorting.Views
             var additionalTreasures = new JsonObject();
             foreach (var additionalTreasure in AdditionalTreasures)
             {
-                additionalTreasures[
-                    $"{(additionalTreasure.Type == AdditionalTreasureViewModel.EType.Item ? "I_" : "T_")}_{additionalTreasure.Name}"
-                ] = additionalTreasure.Amount;
+                additionalTreasures[additionalTreasure.Name] = additionalTreasure.Amount;
             }
 
             var bagConfiguration = new BagConfiguration

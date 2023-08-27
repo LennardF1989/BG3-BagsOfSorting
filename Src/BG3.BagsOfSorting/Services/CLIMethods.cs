@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿#pragma warning disable S101
+
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -145,7 +147,21 @@ object category ""{0}"",1,0,0,0,0,0,0,0
         private static readonly string ATLAS_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "GustavDev", "GUI");
         private static readonly string TEXTUREBANK_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "GustavDev", "Content", "UI", "[PAK]_UI");
         private static readonly string LOCALIZATION_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Localization", "English");
-        private static readonly string TREASURETABLE_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "GustavDev", "Stats", "Generated");
+        private static readonly string TREASURETABLE_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "DiceSet_01", "Stats", "Generated");
+
+        private static readonly ResizeOptions _itemIconResizeOptions = new()
+        {
+            Size = new Size(ICON_SIZE, ICON_SIZE),
+            Position = AnchorPositionMode.Center,
+            Mode = ResizeMode.Max
+        };
+
+        private static readonly ResizeOptions _tooltipIconResizeOptions = new()
+        {
+            Size = new Size(TOOLTIP_SIZE, TOOLTIP_SIZE),
+            Position = AnchorPositionMode.Center,
+            Mode = ResizeMode.Max
+        };
 
         private static List<string> _log;
 
@@ -165,10 +181,19 @@ object category ""{0}"",1,0,0,0,0,0,0,0
 
             foreach (var fileInfo in files)
             {
-                ExportAtlasIcons(fileInfo.FullName);
+                try
+                {
+                    ExportAtlasIcons(fileInfo.FullName);
+                }
+                catch (Exception ex)
+                {
+                    _log.Add($"[{fileInfo.Name} | Error] Unhandled exception: {ex.Message}");
+                }
             }
         }
 
+        // ReSharper disable AssignNullToNotNullAttribute
+        // ReSharper disable PossibleNullReferenceException
         private static void ExportAtlasIcons(string fileName)
         {
             var xmlDocument = new XmlDocument();
@@ -222,6 +247,8 @@ object category ""{0}"",1,0,0,0,0,0,0,0
                 result.SaveAsPng(Path.Combine(Constants.ICONS_OUTPUT_PATH, $"{atlasIcon.MapKey}.png"));
             }
         }
+        // ReSharper enable AssignNullToNotNullAttribute
+        // ReSharper enable PossibleNullReferenceException
 
         public static void GenerateBags()
         {
@@ -256,7 +283,7 @@ object category ""{0}"",1,0,0,0,0,0,0,0
 
             if (bagConfiguration.Bags.Count != numberOfUniqueMapKeys)
             {
-                _log.Add("[Fatal error] All MapKeys have to be unique!");
+                _log.Add("[Fatal Error] All MapKeys have to be unique");
 
                 return;
             }
@@ -269,9 +296,11 @@ object category ""{0}"",1,0,0,0,0,0,0,0
                 }
                 catch (Exception ex)
                 {
-                    _log.Add($"[Error] Failed to generated bag '{bag.DisplayName}': {ex.Message}");
+                    _log.Add($"[{bag.Name} | Error] Unhandled exception: {ex.Message}");
                 }
             }
+
+            Directory.CreateDirectory(TREASURETABLE_PATH);
 
             GenerateTreasureTable(
                 bagConfiguration,
@@ -286,7 +315,7 @@ object category ""{0}"",1,0,0,0,0,0,0,0
             bag.Name = GetNameForBag(bag);
 
             GenerateLocalization(bag, LOCALIZATION_PATH);
-            GenerateIcon(bag, bagConfiguration.AlignGeneratedItemIconsRight, ICON_PATH);
+            GenerateItemIcon(bag, bagConfiguration.AlignGeneratedItemIconsRight, ICON_PATH);
             GenerateTooltipIcon(bag, TOOLTIP_ICON_PATH);
             GenerateRootTemplate(bag, ROOTTEMPLATES_PATH);
             GenerateData(bag, DATA_PATH);
@@ -323,13 +352,14 @@ object category ""{0}"",1,0,0,0,0,0,0,0
             ConvertXMLToLoca(xmlPath, locaPath);
         }
 
-        private static void GenerateIcon(BagConfiguration.Bag bag, bool alignGeneratedItemIconsRight, string outputPath)
+        // ReSharper disable AccessToDisposedClosure
+        private static void GenerateItemIcon(BagConfiguration.Bag bag, bool alignGeneratedItemIconsRight, string outputPath)
         {
             var baseIconPath = Path.Combine(CONTENT_STOCK_PATH, SMALL_BASE_ICON);
 
             if (!File.Exists(baseIconPath))
             {
-                _log.Add($"[Error] Could not find {baseIconPath} for bag '{bag.DisplayName}'!");
+                _log.Add($"[{bag.Name} | Item Icon | Error] Could not find {baseIconPath}");
 
                 return;
             }
@@ -348,7 +378,7 @@ object category ""{0}"",1,0,0,0,0,0,0,0
 
                 if (!File.Exists(iconPath))
                 {
-                    _log.Add($"[Error] Could not find {iconPath} for bag '{bag.DisplayName}'!");
+                    _log.Add($"[{bag.Name} | Item Icon | Error] Could not find {iconPath}");
 
                     return;
                 }
@@ -361,16 +391,16 @@ object category ""{0}"",1,0,0,0,0,0,0,0
 
                     if (baseIconImage.Width != ICON_SIZE || baseIconImage.Height != ICON_SIZE)
                     {
-                        _log.Add($"[Error] Expected {baseIconPath} to be {ICON_SIZE}x{ICON_SIZE}, but it's {baseIconImage.Width}x{baseIconImage.Height}!");
+                        _log.Add($"[{bag.Name} | Item Icon | Warning] Expected {baseIconPath} to be {ICON_SIZE}x{ICON_SIZE}, but it's {baseIconImage.Width}x{baseIconImage.Height}.");
 
-                        return;
+                        baseIconImage.Mutate(x => x.Resize(_itemIconResizeOptions));
                     }
 
                     if (iconImage.Width != ICON_SIZE || iconImage.Height != ICON_SIZE)
                     {
-                        _log.Add($"[Error] Expected {iconPath} to be {ICON_SIZE}x{ICON_SIZE}, but it's {iconImage.Width}x{iconImage.Height}!");
+                        _log.Add($"[{bag.Name} | Item Icon | Warning] Expected {iconPath} to be {ICON_SIZE}x{ICON_SIZE}, but it's {iconImage.Width}x{iconImage.Height}.");
 
-                        return;
+                        iconImage.Mutate(x => x.Resize(_itemIconResizeOptions));
                     }
 
                     var twoThirds = (int)Math.Round(ICON_SIZE * 0.66f);
@@ -401,9 +431,9 @@ object category ""{0}"",1,0,0,0,0,0,0,0
 
                     if (iconImage.Width != ICON_SIZE || iconImage.Height != ICON_SIZE)
                     {
-                        _log.Add($"[Error] Expected {iconPath} to be {ICON_SIZE}x{ICON_SIZE}, but it's {iconImage.Width}x{iconImage.Height}!");
+                        _log.Add($"[{bag.Name} | Item Icon | Warning] Expected {iconPath} to be {ICON_SIZE}x{ICON_SIZE}, but it's {iconImage.Width}x{iconImage.Height}.");
 
-                        return;
+                        iconImage.Mutate(x => x.Resize(_itemIconResizeOptions));
                     }
 
                     iconImage.SaveAsPng(outputIconPath);
@@ -419,6 +449,14 @@ object category ""{0}"",1,0,0,0,0,0,0,0
         private static void GenerateTooltipIcon(BagConfiguration.Bag bag, string outputPath)
         {
             var baseIconPath = Path.Combine(CONTENT_STOCK_PATH, LARGE_BASE_ICON);
+
+            if (!File.Exists(baseIconPath))
+            {
+                _log.Add($"[{bag.Name} | Tooltip Icon | Error] Could not find {baseIconPath}");
+
+                return;
+            }
+
             var outputIconPath = Path.Combine(outputPath, $"{bag.Name}.png");
 
             if (bag.TooltipIcon == null)
@@ -431,6 +469,13 @@ object category ""{0}"",1,0,0,0,0,0,0,0
                     ? Path.Combine(Constants.CONTENT_CUSTOM_PATH, $"{LARGE_ICON_PREFIX}{bag.TooltipIcon.Name}.png")
                     : Path.Combine(Constants.ICONS_OUTPUT_PATH, $"{bag.TooltipIcon.Name}.png");
 
+                if (!File.Exists(iconPath))
+                {
+                    _log.Add($"[{bag.Name} | Tooltip Icon | Error] Could not find {iconPath}");
+
+                    return;
+                }
+
                 if (bag.TooltipIcon.Generate)
                 {
                     using var baseIconImage = Image.Load(baseIconPath);
@@ -439,16 +484,16 @@ object category ""{0}"",1,0,0,0,0,0,0,0
 
                     if (baseIconImage.Width != TOOLTIP_SIZE || baseIconImage.Height != TOOLTIP_SIZE)
                     {
-                        _log.Add($"[Error] Expected {baseIconPath} to be {TOOLTIP_SIZE}x{TOOLTIP_SIZE}, but it's {baseIconImage.Width}x{baseIconImage.Height}!");
+                        _log.Add($"[{bag.Name} => Tooltip Icon | Warning] Expected {baseIconPath} to be {TOOLTIP_SIZE}x{TOOLTIP_SIZE}, but it's {baseIconImage.Width}x{baseIconImage.Height}.");
 
-                        return;
+                        baseIconImage.Mutate(x => x.Resize(_tooltipIconResizeOptions));
                     }
 
-                    if (iconImage.Width >= TOOLTIP_SIZE || iconImage.Height >= TOOLTIP_SIZE)
+                    if (iconImage.Width > TOOLTIP_SIZE || iconImage.Height > TOOLTIP_SIZE)
                     {
-                        _log.Add($"[Error] Expected {iconPath} to be {TOOLTIP_SIZE}x{TOOLTIP_SIZE} or less, but it's {iconImage.Width}x{iconImage.Height}!");
+                        _log.Add($"[{bag.Name} | Tooltip Icon | Warning] Expected {iconPath} to be {TOOLTIP_SIZE}x{TOOLTIP_SIZE} or less, but it's {iconImage.Width}x{iconImage.Height}.");
 
-                        return;
+                        iconImage.Mutate(x => x.Resize(_tooltipIconResizeOptions));
                     }
 
                     var topRight = TOOLTIP_SIZE - ICON_SIZE * 2 - 8;
@@ -466,9 +511,9 @@ object category ""{0}"",1,0,0,0,0,0,0,0
 
                     if (iconImage.Width != TOOLTIP_SIZE || iconImage.Height != TOOLTIP_SIZE)
                     {
-                        _log.Add($"[Error] Expected {iconPath} to be {TOOLTIP_SIZE}x{TOOLTIP_SIZE}, but it's {iconImage.Width}x{iconImage.Height}!");
+                        _log.Add($"[{bag.Name} | Tooltip Icon | Warning] Expected {iconPath} to be {TOOLTIP_SIZE}x{TOOLTIP_SIZE}, but it's {iconImage.Width}x{iconImage.Height}.");
 
-                        return;
+                        iconImage.Mutate(x => x.Resize(_tooltipIconResizeOptions));
                     }
 
                     iconImage.SaveAsPng(outputIconPath);
@@ -484,6 +529,7 @@ object category ""{0}"",1,0,0,0,0,0,0,0
 
             File.Move($"{fullPathNoExtension}.dds", $"{fullPathNoExtension}.DDS");
         }
+        // ReSharper enable AccessToDisposedClosure
 
         private static void GenerateRootTemplate(BagConfiguration.Bag bag, string outputPath)
         {
@@ -591,6 +637,7 @@ object category ""{0}"",1,0,0,0,0,0,0,0
                 Path.GetFullPath(inputPath),
                 new PackageCreationOptions
                 {
+                    Priority = byte.MaxValue,
                     Version = PackageVersion.V18
                 }
             );

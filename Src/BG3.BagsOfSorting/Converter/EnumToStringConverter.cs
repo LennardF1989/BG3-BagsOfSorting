@@ -6,9 +6,14 @@ namespace BG3.BagsOfSorting.Converter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            if (value == null)
+            {
+                return string.Empty;
+            }
+
             try
             {
-                return Enum.GetName((value.GetType()), value);
+                return Enum.GetName(value.GetType(), value);
             }
             catch
             {
@@ -18,9 +23,14 @@ namespace BG3.BagsOfSorting.Converter
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            if (value == null)
+            {
+                return string.Empty;
+            }
+
             try
             {
-                return Enum.Parse(targetType, value.ToString());
+                return Enum.Parse(targetType, value.ToString()!);
             }
             catch
             {
