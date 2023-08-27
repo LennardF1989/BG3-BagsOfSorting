@@ -3,6 +3,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Security;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -331,9 +332,15 @@ object category ""{0}"",1,0,0,0,0,0,0,0
 
             var result = string.Format(
                 LOCALIZATION_FORMAT,
-                guid1, bag.DisplayName,
-                guid2, bag.Description,
-                guid3, bag.TechnicalDescription
+                guid1, string.IsNullOrWhiteSpace(bag.DisplayName) 
+                    ? string.Empty 
+                    : SecurityElement.Escape(bag.DisplayName),
+                guid2, string.IsNullOrWhiteSpace(bag.Description) 
+                    ? string.Empty 
+                    : SecurityElement.Escape(bag.Description),
+                guid3, string.IsNullOrWhiteSpace(bag.TechnicalDescription) 
+                    ? string.Empty 
+                    : SecurityElement.Escape(bag.TechnicalDescription)
             );
 
             bag.DisplayName = string.IsNullOrWhiteSpace(bag.DisplayName)
