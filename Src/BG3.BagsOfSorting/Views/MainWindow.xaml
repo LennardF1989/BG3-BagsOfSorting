@@ -29,6 +29,7 @@
                 <Label Content="Open directory:"></Label>
                 <Button Content="Content" Click="OpenContentDirectory"  Padding="5" />
                 <Button Content="Output" Click="OpenOutputDirectory" Padding="5" />
+                <Button Content="Mods" Click="OpenModsDirectory" Padding="5" />
             </ToolBar>
         </ToolBarTray>
         <TabControl>

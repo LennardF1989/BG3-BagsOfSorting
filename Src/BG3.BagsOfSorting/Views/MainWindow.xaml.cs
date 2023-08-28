@@ -173,6 +173,11 @@ namespace BG3.BagsOfSorting.Views
             Process.Start("explorer", Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Output")));
         }
 
+        private void OpenModsDirectory(object sender, RoutedEventArgs e)
+        {
+            Process.Start("explorer", Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Larian Studios", "Baldur's Gate 3", "Mods")));
+        }
+
         private void GeneratePAK(object sender, RoutedEventArgs e)
         {
             _selectedBag?.Update();

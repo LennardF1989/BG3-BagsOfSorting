@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.Runtime.CompilerServices;
 using BG3.BagsOfSorting.Services;
 
@@ -9,6 +10,9 @@ namespace BG3.BagsOfSorting
         [STAThread]
         public static void Main(string[] args)
         {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            
             var command = args.FirstOrDefault();
 
             switch (command)
