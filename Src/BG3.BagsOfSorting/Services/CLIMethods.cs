@@ -148,7 +148,7 @@ object category ""{0}"",1,0,0,0,0,0,0,0
         private static readonly string ATLAS_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "GustavDev", "GUI");
         private static readonly string TEXTUREBANK_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "GustavDev", "Content", "UI", "[PAK]_UI");
         private static readonly string LOCALIZATION_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Localization", "English");
-        private static readonly string TREASURETABLE_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "DiceSet_01", "Stats", "Generated");
+        private static readonly string TREASURETABLE_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "PouchOfWonders", "Stats", "Generated");
 
         private static readonly ResizeOptions _itemIconResizeOptions = new()
         {
