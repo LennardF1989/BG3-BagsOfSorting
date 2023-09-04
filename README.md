@@ -15,7 +15,7 @@ The following commands are available:
 - `--export-atlas-icons` will parse all .LSX files it can find under `Content\Stock`, and try to extract icons from the .DDS files to `Output\Icons`.
 - `--generate-bags` will read the `Content\Bags.json` file and use that information to generate a `BagsOfSorting.pak` in `Output\Bags`.
 - `--add-bag` will create a new `Content\Bags.json` with 1 empty bag, or will open an existing `Content\Bags.json` and add 1 empty bag to it. Added for convenience, as it removes the need of having to manually generate GUIDs.
-- 
+
 ### First-time use
 Run the command `--export-atlas-icons` to prepare your workspace. Then run `--add-bag` to generate an empty `Content\Bags.json`.
 
@@ -92,6 +92,11 @@ Inside your `Content\Bags.json` update the `AdditionalTreasures` accordingly, fo
 This will give you access to all items in the Tutorial Chest (*) and 2 shovels.
 
 \* This is which is a method a lot of mods are using now. Do notice the `T_`-prefix to reference a specific `TreasureTable` instead of an `Item`, which uses the `I_`-prefix instead.
+
+## Additional functionality: Generate a standalone mod
+If you do not want to use Pouch of Wonders, because you are already using something else, the GUI now has the possibility to generate a standalone mod to work with the game. 
+
+Simply changes the `Folder`-value in the `Treasure Table`-tab to something other than `PouchOfWonders`. Set the `Name`-value to your desired TreasureTable, for example `T_TUT_Chest_Potions` for the Tutorial Chest.
 
 ## Additional functionality: Flip the generated icons
 It is possible to flip the generated icons from left to right by setting `AlignGeneratedItemIconsRight` to `true` in the `Content\Bags.json`. It is however not recommended to do this when you use generated icons. This is because in-game the amount of items in a pouch is shown the upper-right corner, and hide the visual cue to Item icons are meant to provide.

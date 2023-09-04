@@ -30,6 +30,12 @@ namespace BG3.BagsOfSorting.Models
             public int? Amount { get; set; }
         }
 
+        public class TreasureTableData
+        {
+            public string FolderName { get; set; }
+            public string Name { get; set; }
+        }
+
         public enum EColor
         {
             None = 0, //Common
@@ -42,6 +48,7 @@ namespace BG3.BagsOfSorting.Models
 
         public List<Bag> Bags { get; set; }
         public JsonObject AdditionalTreasures { get; set; }
+        public TreasureTableData TreasureTable { get; set; }
         public bool AlignGeneratedItemIconsRight { get; set; }
     }
 }

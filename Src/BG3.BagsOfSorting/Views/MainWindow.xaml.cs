@@ -23,7 +23,7 @@ namespace BG3.BagsOfSorting.Views
         public bool AlignGeneratedItemIconsRight { get; set; }
         public ObservableCollection<string> BagColors { get; set; }
         public ObservableCollection<string> TreasureTypes { get; set; }
-
+        
         public BagViewModel SelectedBag
         {
             get => _selectedBag;
@@ -53,8 +53,22 @@ namespace BG3.BagsOfSorting.Views
         public bool IsBagSelected => SelectedBag != null;
         public bool IsAdditionalTreasureSelected => SelectedAdditionalTreasure != null;
 
+        public string TreasureTableFolderName
+        {
+            get => _treasureTableFolderName;
+            set => SetField(ref _treasureTableFolderName, value);
+        }
+
+        public string TreasureTableName
+        {
+            get => _treasureTableName;
+            set => SetField(ref _treasureTableName, value);
+        }
+
         private BagViewModel _selectedBag;
         private AdditionalTreasureViewModel _selectedAdditionalTreasure;
+        private string _treasureTableFolderName;
+        private string _treasureTableName;
 
         public MainWindow()
         {
@@ -101,6 +115,9 @@ namespace BG3.BagsOfSorting.Views
             }
 
             AlignGeneratedItemIconsRight = bagConfiguration.AlignGeneratedItemIconsRight;
+
+            TreasureTableFolderName = bagConfiguration.TreasureTable?.FolderName ?? Constants.DEFAULT_TREASURETABLE_FOLDERNAME;
+            TreasureTableName = bagConfiguration.TreasureTable?.Name ?? Constants.DEFAULT_TREASURETABLE_NAME;
 
             BagColors = new ObservableCollection<string>(Enum.GetNames(typeof(BagConfiguration.EColor)));
 
@@ -360,7 +377,12 @@ namespace BG3.BagsOfSorting.Views
             {
                 Bags = Bags.Select(x => x.Bag).ToList(),
                 AdditionalTreasures = additionalTreasures,
-                AlignGeneratedItemIconsRight = AlignGeneratedItemIconsRight
+                AlignGeneratedItemIconsRight = AlignGeneratedItemIconsRight,
+                TreasureTable = new BagConfiguration.TreasureTableData
+                {
+                    FolderName = TreasureTableFolderName,
+                    Name = TreasureTableName
+                }
             };
             return bagConfiguration;
         }

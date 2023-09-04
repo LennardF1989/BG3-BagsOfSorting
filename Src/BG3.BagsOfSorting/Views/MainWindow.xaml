@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:BG3.BagsOfSorting.Controls"
         mc:Ignorable="d"
         Title="Baldur's Gate 3 - Bags of Sorting" 
         Height="500" 
@@ -77,17 +78,36 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Label Grid.Column="0" Grid.Row="0" Content="MapKey" />
-                        <TextBox Grid.Column="1" Grid.Row="0" IsReadOnly="True" Margin="0,0,0,5" Text="{Binding SelectedBag.Bag.MapKey}" Background="LightGray"/>
+                        <controls:TextBoxEx Grid.Column="1" Grid.Row="0" IsReadOnly="True" Margin="0,0,0,5" Text="{Binding SelectedBag.Bag.MapKey}" Background="LightGray"/>
                         <Label Grid.Column="0" Grid.Row="1" Content="Name"/>
-                        <TextBox Grid.Column="1" Grid.Row="1" IsReadOnly="True" Margin="0,0,0,5" Text="{Binding SelectedBag.Bag.Name}" Background="LightGray" />
+                        <controls:TextBoxEx Grid.Column="1" Grid.Row="1" IsReadOnly="True" Margin="0,0,0,5" Text="{Binding SelectedBag.Bag.Name}" Background="LightGray" />
                         <Label Grid.Column="0" Grid.Row="2" Content="Display Name"/>
-                        <TextBox Grid.Column="1" Grid.Row="2" Margin="0,0,0,5" Text="{Binding SelectedBag.Bag.DisplayName}" />
+                        <controls:TextBoxEx Grid.Column="1" Grid.Row="2" Margin="0,0,0,5" Text="{Binding SelectedBag.Bag.DisplayName}" />
                         <Label Grid.Column="0" Grid.Row="3" Content="Description"/>
-                        <TextBox Grid.Column="1" Grid.Row="3" Margin="0,0,0,5" MinLines="2" TextWrapping="Wrap" Text="{Binding SelectedBag.Bag.Description}" />
+                        <controls:TextBoxEx Grid.Column="1" Grid.Row="3" Margin="0,0,0,5" MinLines="2" TextWrapping="Wrap" Text="{Binding SelectedBag.Bag.Description}" />
                         <Label Grid.Column="0" Grid.Row="4" Content="Technical Description"/>
-                        <TextBox Grid.Column="1" Grid.Row="4" Margin="0,0,0,5" MinLines="2" TextWrapping="Wrap" Text="{Binding SelectedBag.Bag.TechnicalDescription}" />
-                        <Label Grid.Column="0" Grid.Row="5" Content="Auto Pickup Condition"/>
-                        <TextBox Grid.Column="1" Grid.Row="5" Margin="0,0,0,5" MinLines="2" TextWrapping="Wrap" Text="{Binding SelectedBag.Bag.AutoPickupCondition}" />
+                        <controls:TextBoxEx Grid.Column="1" Grid.Row="4" Margin="0,0,0,5" MinLines="2" TextWrapping="Wrap" Text="{Binding SelectedBag.Bag.TechnicalDescription}" />
+                        <Label Grid.Column="0" Grid.Row="5" Content="Auto Pickup Condition (?)">
+                            <Label.ToolTip>
+                                <TextBlock>
+                                    Known tags:<LineBreak/>
+                                    - ALCH_SOLUTION_COATING<LineBreak/>
+                                    - ALCH_SOLUTION_GRENADE<LineBreak/>
+                                    - ARROW<LineBreak/>
+                                    - BOOK<LineBreak/>
+                                    - EXPLOSIVES<LineBreak/>
+                                    - GRENADE<LineBreak/>
+                                    - POTION<LineBreak/>
+                                    - SCROLL<LineBreak/>
+                                    <LineBreak/>
+                                    Examples:<LineBreak/>
+                                    - Tagged('BOOK')<LineBreak/>
+                                    - Tagged('BOOK') or Tagged('SCROLL)<LineBreak/>
+                                    - Tagged('BOOK') and not Tagged('SCROLL')
+                                </TextBlock>
+                            </Label.ToolTip>
+                        </Label>
+                        <controls:TextBoxEx Grid.Column="1" Grid.Row="5" Margin="0,0,0,5" MinLines="2" TextWrapping="Wrap" Text="{Binding SelectedBag.Bag.AutoPickupCondition}" />
                         <Label Grid.Column="0" Grid.Row="6" Content="Color"/>
                         <ComboBox Grid.Column="1" Grid.Row="6" Margin="0,0,0,5" 
                               ItemsSource="{Binding BagColors}"
@@ -97,7 +117,7 @@
                         <StackPanel Grid.Column="1" Grid.Row="7" Margin="0,0,0, 5">
                             <DockPanel LastChildFill="True" Margin="0,0,0,5">
                                 <Button DockPanel.Dock="Right" Content="Browse..." Click="BrowseItemIcon" />
-                                <TextBox Margin="0,0,5,0" Text="{Binding SelectedBag.Bag.ItemIcon.Name }"/>
+                                <controls:TextBoxEx Margin="0,0,5,0" Text="{Binding SelectedBag.Bag.ItemIcon.Name }"/>
                             </DockPanel>
                             <CheckBox Content="Custom" Margin="0,0,0,5" IsChecked="{Binding SelectedBag.Bag.ItemIcon.Custom}" />
                             <CheckBox Content="Generate" IsChecked="{Binding SelectedBag.Bag.ItemIcon.Generate}" />
@@ -106,17 +126,17 @@
                         <StackPanel Grid.Column="1" Grid.Row="8" Margin="0,0,0,5">
                             <DockPanel LastChildFill="True" Margin="0,0,0,5">
                                 <Button DockPanel.Dock="Right" Content="Browse..." Click="BrowseToolTipIcon" />
-                                <TextBox Margin="0,0,5,0" Text="{Binding SelectedBag.Bag.TooltipIcon.Name}"/>
+                                <controls:TextBoxEx Margin="0,0,5,0" Text="{Binding SelectedBag.Bag.TooltipIcon.Name}"/>
                             </DockPanel>
                             <CheckBox Content="Custom" Margin="0,0,0,5" IsChecked="{Binding SelectedBag.Bag.TooltipIcon.Custom}" />
                             <CheckBox Content="Generate" IsChecked="{Binding SelectedBag.Bag.TooltipIcon.Generate}" />
                         </StackPanel>
                         <Label Grid.Column="0" Grid.Row="9" Content="Amount"/>
-                        <TextBox Grid.Column="1" Grid.Row="9" Margin="0,0,0,5" Text="{Binding SelectedBag.Bag.Amount}" />
+                        <controls:TextBoxEx Grid.Column="1" Grid.Row="9" Margin="0,0,0,5" Text="{Binding SelectedBag.Bag.Amount}" />
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Additional Treasures">
+            <TabItem Header="Treasure Table">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -132,13 +152,20 @@
                         SelectionMode="Single" 
                         IsReadOnly="True"
                         SelectedItem="{Binding SelectedAdditionalTreasure}"/>
-                    <Grid Grid.Column="0" Grid.Row="1" Margin="5">
+                    <Grid Grid.Column="0" Grid.Row="1" ColumnSpan="2" Margin="5">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                             <Button Content="Add Treasure" Padding="5" Margin="0,0,5,0" Click="AddAdditionalTreasure" />
                             <Button Content="Remove Treasure" Padding="5" Click="RemoveAdditionalTreasure" />
                         </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" ToolTip="If you are not using Pouch of Wonders, these settings will allow you to generate a standalone mod.">
+                            <Label Content="(?)" />
+                            <Label Content="Folder" />
+                            <controls:TextBoxEx Text="{Binding TreasureTableFolderName}" Width="128" VerticalContentAlignment="Center" />
+                            <Label Content="Name" />
+                            <controls:TextBoxEx Text="{Binding TreasureTableName}" Width="128" VerticalContentAlignment="Center" />
+                        </StackPanel>
                     </Grid>
-                    <Grid Grid.Row="0" Grid.Column="1" RowSpan="2" Margin="5" IsEnabled="{Binding IsAdditionalTreasureSelected}">
+                    <Grid Grid.Row="0" Grid.Column="1" Margin="5" IsEnabled="{Binding IsAdditionalTreasureSelected}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
@@ -150,16 +177,16 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Label Grid.Column="0" Grid.Row="0" Content="Name" />
-                        <TextBox Grid.Column="1" Grid.Row="0" IsReadOnly="True" Margin="0,0,0,5" Text="{Binding SelectedAdditionalTreasure.Name, Mode=OneWay}" Background="LightGray"/>
+                        <controls:TextBoxEx Grid.Column="1" Grid.Row="0" IsReadOnly="True" Margin="0,0,0,5" Text="{Binding SelectedAdditionalTreasure.Name, Mode=OneWay}" Background="LightGray"/>
                         <Label Grid.Column="0" Grid.Row="1" Content="Display Name" Margin="0,0,5,0" />
-                        <TextBox Grid.Column="1" Grid.Row="1" Margin="0,0,0,5" Text="{Binding SelectedAdditionalTreasure.DisplayName}" />
+                        <controls:TextBoxEx Grid.Column="1" Grid.Row="1" Margin="0,0,0,5" Text="{Binding SelectedAdditionalTreasure.DisplayName}" />
                         <Label Grid.Column="0" Grid.Row="2" Content="Type" Margin="0,0,5,0" />
                         <ComboBox Grid.Column="1" Grid.Row="2" 
                                   Margin="0,0,0,5"
                                   ItemsSource="{Binding TreasureTypes}"
                                   SelectedItem="{Binding SelectedAdditionalTreasure.Type, Converter={StaticResource EnumToStringConverter}}" />
                         <Label Grid.Column="0" Grid.Row="3" Content="Amount" Margin="0,0,5,0" />
-                        <TextBox Grid.Column="1" Grid.Row="3" Margin="0,0,0,5" Text="{Binding SelectedAdditionalTreasure.Amount}" />
+                        <controls:TextBoxEx Grid.Column="1" Grid.Row="3" Margin="0,0,0,5" Text="{Binding SelectedAdditionalTreasure.Amount}" />
                     </Grid>
                 </Grid>
             </TabItem>

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Security;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -130,19 +131,64 @@ data ""Rarity"" ""{2}""
 </save>";
 
         private const string TREASURETABLE_FORMAT1 = @"treasure itemtypes ""Common"",""Uncommon"",""Rare"",""Epic"",""Legendary"",""Divine"",""Unique""
-new treasuretable ""POW_TT""
+new treasuretable ""{0}""
 CanMerge 1
-{0}";
+{1}";
 
         private const string TREASURETABLE_FORMAT2 = @"new subtable ""{1},1""
 object category ""{0}"",1,0,0,0,0,0,0,0
 ";
+
+        private const string MODS_META = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<save>
+    <version major=""4"" minor=""0"" revision=""9"" build=""900""/>
+    <region id=""Config"">
+        <node id=""root"">
+            <children>
+                <node id=""Dependencies""/>
+                <node id=""ModuleInfo"">
+                    <attribute id=""Author"" type=""LSString"" value=""LennardF1989""/>
+                    <attribute id=""CharacterCreationLevelName"" type=""FixedString"" value=""""/>
+                    <attribute id=""Description"" type=""LSString"" value=""""/>
+                    <attribute id=""Folder"" type=""LSString"" value=""{0}""/>
+                    <attribute id=""GMTemplate"" type=""FixedString"" value=""""/>
+                    <attribute id=""LobbyLevelName"" type=""FixedString"" value=""""/>
+                    <attribute id=""MD5"" type=""LSString"" value=""""/>
+                    <attribute id=""MainMenuBackgroundVideo"" type=""FixedString"" value=""""/>
+                    <attribute id=""MenuLevelName"" type=""FixedString"" value=""""/>
+                    <attribute id=""Name"" type=""FixedString"" value=""Bags of Sorting""/>
+                    <attribute id=""NumPlayers"" type=""uint8"" value=""4""/>
+                    <attribute id=""PhotoBooth"" type=""FixedString"" value=""""/>
+                    <attribute id=""StartupLevelName"" type=""FixedString"" value=""""/>
+                    <attribute id=""Tags"" type=""LSWString"" value=""""/>
+                    <attribute id=""Type"" type=""FixedString"" value=""Add-on""/>
+                    <attribute id=""UUID"" type=""FixedString"" value=""{1}""/>
+                    <attribute id=""Version64"" type=""int64"" value=""1""/>
+                    <children>
+                        <node id=""PublishVersion"">
+                            <attribute id=""Version64"" type=""int64"" value=""1""/>
+                        </node>
+                        <node id=""Scripts""/>
+                        <node id=""TargetModes"">
+                            <children>
+                                <node id=""Target"">
+                                    <attribute id=""Object"" type=""FixedString"" value=""Story""/>
+                                </node>
+                            </children>
+                        </node>
+                    </children>
+                </node>
+            </children>
+        </node>
+    </region>
+</save>";
 
         private static readonly string CONTENT_STOCK_PATH = Path.Combine(Constants.CONTENT_PATH, "Stock");
         private static readonly string BAGS_OUTPUT_PATH = Path.Combine("Output", "Bags");
         private static readonly string BAGS_OUTPUT_PATH_REMOVED = Path.Combine("Output", "Bags_Removed");
         private static readonly string ICON_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "GustavDev", "Assets", "Textures", "Icons");
         private static readonly string TOOLTIP_ICON_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "Game", "GUI", "Assets", "Tooltips", "ItemIcons");
+        private static readonly string CONTROLLER_ICON_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "Game", "GUI", "Assets", "ControllerUIIcons", "items_png");
         private static readonly string ROOTTEMPLATES_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "GustavDev", "RootTemplates");
         private static readonly string DATA_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "GustavDev", "Stats", "Generated", "Data");
         private static readonly string ATLAS_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "GustavDev", "GUI");
@@ -267,6 +313,7 @@ object category ""{0}"",1,0,0,0,0,0,0,0
 
             Directory.CreateDirectory(ICON_PATH);
             Directory.CreateDirectory(TOOLTIP_ICON_PATH);
+            Directory.CreateDirectory(CONTROLLER_ICON_PATH);
             Directory.CreateDirectory(ROOTTEMPLATES_PATH);
             Directory.CreateDirectory(DATA_PATH);
             Directory.CreateDirectory(ATLAS_PATH);
@@ -308,6 +355,12 @@ object category ""{0}"",1,0,0,0,0,0,0,0
                 TREASURETABLE_PATH
             );
 
+            //If the TreasureTable-folder is different from the default value, we need to generate a meta.lsx
+            if (bagConfiguration.TreasureTable != null && bagConfiguration.TreasureTable.FolderName != Constants.DEFAULT_TREASURETABLE_FOLDERNAME)
+            {
+                GenerateModsMeta(bagConfiguration.TreasureTable);
+            }
+
             CreatePackage(BAGS_OUTPUT_PATH);
         }
 
@@ -317,7 +370,7 @@ object category ""{0}"",1,0,0,0,0,0,0,0
 
             GenerateLocalization(bag, LOCALIZATION_PATH);
             GenerateItemIcon(bag, bagConfiguration.AlignGeneratedItemIconsRight, ICON_PATH);
-            GenerateTooltipIcon(bag, TOOLTIP_ICON_PATH);
+            GenerateTooltipIcon(bag, TOOLTIP_ICON_PATH, CONTROLLER_ICON_PATH);
             GenerateRootTemplate(bag, ROOTTEMPLATES_PATH);
             GenerateData(bag, DATA_PATH);
             GenerateAtlas(bag, ATLAS_PATH);
@@ -380,7 +433,7 @@ object category ""{0}"",1,0,0,0,0,0,0,0
             else
             {
                 var iconPath = bag.ItemIcon.Custom
-                    ? Path.Combine(Constants.CONTENT_CUSTOM_PATH, $"{SMALL_ICON_PREFIX}{bag.ItemIcon.Name}.png")
+                    ? Path.Combine(Constants.CONTENT_CUSTOM_PATH, $"{bag.ItemIcon.Name}.png")
                     : Path.Combine(Constants.ICONS_OUTPUT_PATH, $"{bag.ItemIcon.Name}.png");
 
                 if (!File.Exists(iconPath))
@@ -453,7 +506,7 @@ object category ""{0}"",1,0,0,0,0,0,0,0
             ConvertPNGtoDDS(fullPath, fullPathDirectory);
         }
 
-        private static void GenerateTooltipIcon(BagConfiguration.Bag bag, string outputPath)
+        private static void GenerateTooltipIcon(BagConfiguration.Bag bag, string outputPath, string additionalOutputPath)
         {
             var baseIconPath = Path.Combine(CONTENT_STOCK_PATH, LARGE_BASE_ICON);
 
@@ -473,7 +526,7 @@ object category ""{0}"",1,0,0,0,0,0,0,0
             else
             {
                 var iconPath = bag.TooltipIcon.Custom
-                    ? Path.Combine(Constants.CONTENT_CUSTOM_PATH, $"{LARGE_ICON_PREFIX}{bag.TooltipIcon.Name}.png")
+                    ? Path.Combine(Constants.CONTENT_CUSTOM_PATH, $"{bag.TooltipIcon.Name}.png")
                     : Path.Combine(Constants.ICONS_OUTPUT_PATH, $"{bag.TooltipIcon.Name}.png");
 
                 if (!File.Exists(iconPath))
@@ -534,7 +587,14 @@ object category ""{0}"",1,0,0,0,0,0,0,0
 
             ConvertPNGtoDDS(fullPath, fullPathDirectory);
 
-            File.Move($"{fullPathNoExtension}.dds", $"{fullPathNoExtension}.DDS");
+            var destinationFileName = $"{fullPathNoExtension}.DDS";
+            File.Move($"{fullPathNoExtension}.dds", destinationFileName);
+
+            //Copy to the additional output path
+            File.Copy(
+                destinationFileName, 
+                Path.Combine(Path.GetFullPath(additionalOutputPath), Path.GetFileName(destinationFileName))
+            );
         }
         // ReSharper enable AccessToDisposedClosure
 
@@ -630,9 +690,30 @@ object category ""{0}"",1,0,0,0,0,0,0,0
                 }
             }
 
-            var output = string.Format(TREASURETABLE_FORMAT1, stringBuilder);
+            var output = string.Format(TREASURETABLE_FORMAT1, bagConfiguration.TreasureTable.FolderName, stringBuilder);
 
             File.WriteAllText(Path.Combine(outputPath, "TreasureTable.txt"), output);
+        }
+
+        private static void GenerateModsMeta(BagConfiguration.TreasureTableData treasureTableData)
+        {
+            var outputPath = Path.Combine(BAGS_OUTPUT_PATH, "Mods", treasureTableData.FolderName);
+
+            Directory.CreateDirectory(outputPath);
+
+            //NOTE: Convert the name into a deterministic GUID using MD5
+            var uuid = new Guid(
+                MD5.HashData(Encoding.UTF8.GetBytes(treasureTableData.FolderName))
+            );
+
+            var output = string.Format(MODS_META, treasureTableData.FolderName, uuid);
+
+            var lsxPath = Path.Combine(outputPath, "meta.lsx");
+            var lsfPath = Path.Combine(outputPath, "meta.lsf");
+
+            File.WriteAllText(lsxPath, output);
+
+            ConvertLSXToLSF(lsxPath, lsfPath);
         }
 
         private static void CreatePackage(string inputPath)
