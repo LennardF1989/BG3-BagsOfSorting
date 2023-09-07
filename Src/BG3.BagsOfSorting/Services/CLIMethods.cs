@@ -690,7 +690,7 @@ object category ""{0}"",1,0,0,0,0,0,0,0
                 }
             }
 
-            var output = string.Format(TREASURETABLE_FORMAT1, bagConfiguration.TreasureTable.FolderName, stringBuilder);
+            var output = string.Format(TREASURETABLE_FORMAT1, bagConfiguration.TreasureTable.Name, stringBuilder);
 
             File.WriteAllText(Path.Combine(outputPath, "TreasureTable.txt"), output);
         }
