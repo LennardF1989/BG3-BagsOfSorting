@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="BG3.BagsOfSorting.Views.Tabs.TreasureTableTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:BG3.BagsOfSorting.Controls"
+             xmlns:bagsOfSorting="clr-namespace:BG3.BagsOfSorting"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <DataGrid
+                        Margin="5" 
+                        ItemsSource="{Binding AdditionalTreasures}"
+                        SelectionMode="Single" 
+                        IsReadOnly="True"
+                        SelectedItem="{Binding SelectedAdditionalTreasure}"/>
+        <Grid Grid.Column="0" Grid.Row="1" ColumnSpan="2" Margin="5">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <Button Content="Add Treasure" Padding="5" Margin="0,0,5,0" Click="AddAdditionalTreasure" />
+                <Button Content="Remove Treasure" Padding="5" Click="RemoveAdditionalTreasure" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" ToolTip="If you are not using Pouch of Wonders, these settings can be used to generate a standalone mod.">
+                <Label Content="(?)" />
+                <Label Content="Mod Folder" />
+                <ComboBox Text="{Binding TreasureTableFolderName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="128" VerticalContentAlignment="Center" IsEditable="True">
+                    <ComboBoxItem Content="{x:Static bagsOfSorting:Constants.DEFAULT_TREASURETABLE_FOLDERNAME}" ToolTip="Pouch of Wonders"/>
+                </ComboBox>
+                <Label Content="Treasure Table" />
+                <ComboBox Text="{Binding TreasureTableName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="128" VerticalContentAlignment="Center" IsEditable="True">
+                    <ComboBoxItem Content="{x:Static bagsOfSorting:Constants.DEFAULT_TREASURETABLE_NAME}" ToolTip="Pouch of Wonders" />
+                    <ComboBoxItem ToolTip="Tutorial Chest">TUT_Chest_Potions</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="0" Grid.Column="1" Margin="5" IsEnabled="{Binding IsAdditionalTreasureSelected}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label Grid.Column="0" Grid.Row="0" Content="Name" />
+            <controls:TextBoxEx Grid.Column="1" Grid.Row="0" IsReadOnly="True" Margin="0,0,0,5" Text="{Binding SelectedAdditionalTreasure.Name, Mode=OneWay}" Background="LightGray"/>
+            <Label Grid.Column="0" Grid.Row="1" Content="Display Name" Margin="0,0,5,0" />
+            <controls:TextBoxEx Grid.Column="1" Grid.Row="1" Margin="0,0,0,5" Text="{Binding SelectedAdditionalTreasure.DisplayName}" />
+            <Label Grid.Column="0" Grid.Row="2" Content="Type" Margin="0,0,5,0" />
+            <ComboBox Grid.Column="1" Grid.Row="2" 
+                                  Margin="0,0,0,5"
+                                  ItemsSource="{Binding TreasureTypes}"
+                                  SelectedItem="{Binding SelectedAdditionalTreasure.Type, Converter={StaticResource EnumToStringConverter}}" />
+            <Label Grid.Column="0" Grid.Row="3" Content="Amount" Margin="0,0,5,0" />
+            <controls:TextBoxEx Grid.Column="1" Grid.Row="3" Margin="0,0,0,5" Text="{Binding SelectedAdditionalTreasure.Amount}" />
+        </Grid>
+    </Grid>
+</UserControl>

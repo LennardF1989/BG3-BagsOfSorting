@@ -1,44 +1,72 @@
-﻿using BG3.BagsOfSorting.Models;
+﻿#pragma warning disable S101
+
+using BG3.BagsOfSorting.Models;
 
 namespace BG3.BagsOfSorting.Services
 {
     public static class GUIMethods
     {
-        public static bool ExportAtlasIcons(out List<string> log)
+        public static bool ExportAtlasIcons(Configuration configuration, out List<string> log)
         {
+            var context = new Context();
+            log = context.Messages;
+
             try
             {
-                CLIMethods.ExportAtlasIcons();
+                context.Configuration = configuration;
 
-                log = CLIMethods.GetLog();
+                CLIMethods.ExportAtlasIcons(context);
 
                 return true;
             }
             catch(Exception ex)
             {
-                log = CLIMethods.GetLog();
-                log.Add($"[Fatal Error] Unhandled exception: {ex}");
+                context.LogMessage($"[Fatal Error] Unhandled exception: {ex}");
 
                 return false;
             }
         }
 
-        public static bool GenerateBags(BagConfiguration bagConfiguration, out List<string> log)
+        public static SearchIndex IndexPAK(Configuration configuration, out List<string> log)
         {
+            var context = new Context();
+            log = context.Messages;
+
             try
             {
-                CLIMethods.SaveConfiguration(bagConfiguration);
+                context.Configuration = configuration;
 
-                CLIMethods.GenerateBags();
+                var searchIndex = CLIMethods.IndexPAK(context);
 
-                log = CLIMethods.GetLog();
+                return searchIndex;
+            }
+            catch (Exception ex)
+            {
+                context.LogMessage($"[Fatal Error] Unhandled exception: {ex}");
+
+                return null;
+            }
+        }
+
+        public static bool GeneratePAK(Configuration configuration, out List<string> log)
+        {
+            var context = new Context();
+            log = context.Messages;
+
+            try
+            {
+                //NOTE: Make sure to create a copy of the configuration, so it can be freely manipulated.
+                CLIMethods.SaveConfiguration(configuration);
+
+                context.Configuration = CLIMethods.LoadConfiguration();
+
+                CLIMethods.GeneratePAK(context);
 
                 return true;
             }
             catch (Exception ex)
             {
-                log = CLIMethods.GetLog();
-                log.Add($"[Fatal Error] Unhandled exception: {ex}");
+                context.LogMessage($"[Fatal Error] Unhandled exception: {ex}");
 
                 return false;
             }

@@ -1,6 +1,8 @@
 ﻿using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
+using BG3.BagsOfSorting.Models;
 using BG3.BagsOfSorting.Services;
 
 namespace BG3.BagsOfSorting
@@ -13,26 +15,40 @@ namespace BG3.BagsOfSorting
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
             
+            ServiceLocator.Initialize();
+            
             var command = args.FirstOrDefault();
+
+            var context = new Context();
 
             switch (command)
             {
                 case "--export-atlas-icons":
-                    CLIMethods.ExportAtlasIcons();
-                    WriteLogFile(CLIMethods.GetLog());
+                    CLIMethods.ExportAtlasIcons(context);
                     break;
-                case "--generate-bags":
-                    CLIMethods.GenerateBags();
-                    WriteLogFile(CLIMethods.GetLog());
+                case "--generate-bags": //NOTE: Backwards compatibility
+                case "--generate-pak":
+                    CLIMethods.GeneratePAK(context);
                     break;
                 case "--add-bag":
                     CLIMethods.AddBag();
-                    WriteLogFile(CLIMethods.GetLog());
+                    break;
+                case "--index-pak":
+                    CLIMethods.IndexPAK(context);
+                    break;
+                case "--search-pak":
+                    CLIMethods
+                        .SearchPAK(string.Join(" ", args.Skip(1)))
+                        .Select(x => JsonSerializer.Serialize(x))
+                        .ToList()
+                        .ForEach(context.LogMessage);
                     break;
                 default:
                     RunApp();
                     break;
             }
+
+            WriteLogFile(context.Messages);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
@@ -43,7 +59,7 @@ namespace BG3.BagsOfSorting
             app.Run();
         }
 
-        private static void WriteLogFile(List<string> logs)
+        private static void WriteLogFile(IReadOnlyCollection<string> logs)
         {
             if (logs == null || !logs.Any())
             {

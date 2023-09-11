@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<save> 
+	<version major="4" minor="0" revision="6" build="5" /> 
+	<region id="Templates">
+		<node id="Templates">
+			<children>	
+				<node id="GameObjects">
+					<attribute id="MapKey" type="FixedString" value="1b6ecc43-b50b-4b84-ad81-a2dae63ec947" />
+					<attribute id="Name" type="LSString" value="POW_Container" />
+					<attribute id="LevelName" type="FixedString" value="" />
+					<attribute id="Type" type="FixedString" value="item" />
+					<attribute id="ParentTemplateId" type="FixedString" value="3e6aac21-333b-4812-a554-376c2d157ba9" />
+					<attribute id="DisplayName" type="TranslatedString" handle="hc5a3fb9age44ag40degb2e6g1d6f6112b590" version="1" />
+					<attribute id="Icon" type="FixedString" value="POW_Container" />
+					<attribute id="Description" type="TranslatedString" handle="hb262745dg66dcg45a6g9dd2g7678fb82bb7c" version="1" />
+					<attribute id="TechnicalDescription" type="TranslatedString" handle="" version="1" />
+					<attribute id="TreasureOnDestroy" type="bool" value="False" />
+					<attribute id="Stats" type="FixedString" value="POW_Container" />
+					<children>
+						<node id="GameMaster" />	
+						<node id="OnDestroyActions" />							
+						<node id="InventoryList">
+							<children>
+								<node id="InventoryItem">
+									<attribute id="Object" type="FixedString" value="POW_TT" />
+								</node>
+							</children>
+						</node>	
+					</children>
+				</node>						
+			</children>
+		</node>
+	</region>
+</save>

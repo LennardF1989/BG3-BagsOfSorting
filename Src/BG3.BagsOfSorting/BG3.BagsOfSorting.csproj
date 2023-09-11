@@ -7,7 +7,10 @@
     <Nullable>disable</Nullable>
     <PlatformTarget>x64</PlatformTarget>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Title>BG3 - Bags of Sorting</Title>
+    <Version>1.4.0</Version>
     <Authors>Lennard Fonteijn</Authors>
     <Copyright>Copyright © 2023 Lennard Fonteijn</Copyright>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
@@ -23,9 +26,18 @@
     <None Remove="Resources\folder_explore.png" />
     <None Remove="Resources\images.png" />
     <None Remove="Resources\package_go.png" />
+    <None Remove="Resources\zoom.png" />
+    <None Remove="Resources\text_list_bullets.png" />
+    <None Remove="Resources\bag.png" />
+    <None Include="..\..\Lib\Textconv\texconv.dll" Link="texconv.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Resource Include="Resources\folder_explore.png" />
     <Resource Include="Resources\images.png" />
     <Resource Include="Resources\package_go.png" />
+    <Resource Include="Resources\zoom.png" />
+    <Resource Include="Resources\text_list_bullets.png" />
+    <Resource Include="Resources\bag.png" />
   </ItemGroup>
 
   <ItemGroup>

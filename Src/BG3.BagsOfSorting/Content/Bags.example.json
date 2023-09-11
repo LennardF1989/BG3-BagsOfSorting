@@ -32,12 +32,12 @@
       "Description": "Uncommon Pouch Description",
       "TechnicalDescription": "Uncommon Pouch Technical Description",
       "ItemIcon": {
-        "Name": "Icon_CustomButNotReally",
+        "Name": "SMALL_Icon_CustomButNotReally",
         "Custom": true,
         "Generate": true
       },
       "TooltipIcon": {
-        "Name": "Icon_CustomButNotReally",
+        "Name": "LARGE_Icon_CustomButNotReally",
         "Custom": true,
         "Generate": true
       },
@@ -50,12 +50,12 @@
       "Description": "Rare Pouch Description",
       "TechnicalDescription": "Rare Pouch Technical Description",
       "ItemIcon": {
-        "Name": "Icon_CustomButNotReally",
+        "Name": "SMALL_Icon_CustomButNotReally",
         "Custom": true,
         "Generate": true
       },
       "TooltipIcon": {
-        "Name": "Icon_CustomButNotReally",
+        "Name": "LARGE_Icon_CustomButNotReally",
         "Custom": true,
         "Generate": true
       },
@@ -68,12 +68,12 @@
       "Description": "Very Rare Pouch Description",
       "TechnicalDescription": "Very Rare Pouch Technical Description",
       "ItemIcon": {
-        "Name": "Icon_CustomButNotReally",
+        "Name": "SMALL_Icon_CustomButNotReally",
         "Custom": true,
         "Generate": true
       },
       "TooltipIcon": {
-        "Name": "Icon_CustomButNotReally",
+        "Name": "LARGE_Icon_CustomButNotReally",
         "Custom": true,
         "Generate": true
       },
@@ -86,12 +86,12 @@
       "Description": "Legendary Pouch Description",
       "TechnicalDescription": "Legendary Pouch Technical Description",
       "ItemIcon": {
-        "Name": "Icon_CustomButNotReally",
+        "Name": "SMALL_Icon_CustomButNotReally",
         "Custom": true,
         "Generate": true
       },
       "TooltipIcon": {
-        "Name": "Icon_CustomButNotReally",
+        "Name": "LARGE_Icon_CustomButNotReally",
         "Custom": true,
         "Generate": true
       },
@@ -104,12 +104,12 @@
       "Description": "Story Description",
       "TechnicalDescription": "Story Technical Description",
       "ItemIcon": {
-        "Name": "Icon_CustomButNotReally",
+        "Name": "SMALL_Icon_CustomButNotReally",
         "Custom": true,
         "Generate": true
       },
       "TooltipIcon": {
-        "Name": "Icon_CustomButNotReally",
+        "Name": "LARGE_Icon_CustomButNotReally",
         "Custom": true,
         "Generate": true
       },

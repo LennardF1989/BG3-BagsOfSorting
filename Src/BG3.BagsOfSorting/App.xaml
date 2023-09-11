@@ -5,5 +5,7 @@
              StartupUri="/Views/MainWindow.xaml">
     <Application.Resources>
         <converter:EnumToStringConverter x:Key="EnumToStringConverter"/>
+        <converter:IconToImageConverter x:Key="IconToImageConverter"/>
+        <converter:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Application.Resources>
 </Application>

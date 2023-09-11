@@ -1,10 +1,9 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace BG3.BagsOfSorting.Controls
 {
-    public class TextBoxEx : TextBox
+    public class TextBoxEx : System.Windows.Controls.TextBox
     {
         static TextBoxEx()
         {
@@ -19,6 +18,14 @@ namespace BG3.BagsOfSorting.Controls
                     UpdateSourceTrigger.PropertyChanged
                 )
             );
+        }
+
+        public TextBoxEx()
+        {
+            PreviewMouseDoubleClick += (_, _) =>
+            {
+                SelectAll();
+            };
         }
     }
 }

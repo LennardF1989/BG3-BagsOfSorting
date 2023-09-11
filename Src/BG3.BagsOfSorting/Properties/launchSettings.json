@@ -1,20 +1,28 @@
 {
   "profiles": {
+    "GUI": {
+      "commandName": "Project",
+      "commandLineArgs": ""
+    },
     "Export Atlas Icons": {
       "commandName": "Project",
       "commandLineArgs": "--export-atlas-icons"
     },
-    "Generate Bags": {
+    "Generate PAK": {
       "commandName": "Project",
-      "commandLineArgs": "--generate-bags"
+      "commandLineArgs": "--generate-pak"
     },
     "Add Bag": {
       "commandName": "Project",
       "commandLineArgs": "--add-bag"
     },
-    "GUI": {
+    "Index PAK": {
       "commandName": "Project",
-      "commandLineArgs": ""
+      "commandLineArgs": "--index-pak"
+    },
+    "Search PAK": {
+      "commandName": "Project",
+      "commandLineArgs": "--search-pak pouch"
     }
   }
 }

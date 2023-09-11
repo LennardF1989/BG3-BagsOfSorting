@@ -1,15 +1,15 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Nodes;
 using System.Windows;
 using BG3.BagsOfSorting.Models;
 using BG3.BagsOfSorting.Services;
 using BG3.BagsOfSorting.ViewModels;
-using Microsoft.Win32;
-using static BG3.BagsOfSorting.ViewModels.AdditionalTreasureViewModel;
+using BG3.BagsOfSorting.Views.UserControls;
+using MessageBox = System.Windows.MessageBox;
 
 namespace BG3.BagsOfSorting.Views
 {
@@ -18,118 +18,32 @@ namespace BG3.BagsOfSorting.Views
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ObservableCollection<BagViewModel> Bags { get; set; }
-        public ObservableCollection<AdditionalTreasureViewModel> AdditionalTreasures { get; set; }
-        public bool AlignGeneratedItemIconsRight { get; set; }
-        public ObservableCollection<string> BagColors { get; set; }
-        public ObservableCollection<string> TreasureTypes { get; set; }
-        
-        public BagViewModel SelectedBag
-        {
-            get => _selectedBag;
-            set
-            {
-                _selectedBag?.Update();
-
-                if (SetField(ref _selectedBag, value))
-                {
-                    OnPropertyChanged(nameof(IsBagSelected));
-                }
-            }
-        }
-
-        public AdditionalTreasureViewModel SelectedAdditionalTreasure
-        {
-            get => _selectedAdditionalTreasure;
-            set
-            {
-                if (SetField(ref _selectedAdditionalTreasure, value))
-                {
-                    OnPropertyChanged(nameof(IsAdditionalTreasureSelected));
-                }
-            }
-        }
-
-        public bool IsBagSelected => SelectedBag != null;
-        public bool IsAdditionalTreasureSelected => SelectedAdditionalTreasure != null;
-
-        public string TreasureTableFolderName
-        {
-            get => _treasureTableFolderName;
-            set => SetField(ref _treasureTableFolderName, value);
-        }
-
-        public string TreasureTableName
-        {
-            get => _treasureTableName;
-            set => SetField(ref _treasureTableName, value);
-        }
-
-        private BagViewModel _selectedBag;
-        private AdditionalTreasureViewModel _selectedAdditionalTreasure;
-        private string _treasureTableFolderName;
-        private string _treasureTableName;
-
         public MainWindow()
         {
-            var bagConfiguration = CLIMethods.LoadConfiguration();
-
-            Bags = new ObservableCollection<BagViewModel>();
-            bagConfiguration.Bags.ForEach(x =>
-            {
-                x.Name = CLIMethods.GetNameForBag(x);
-
-                Bags.Add(new BagViewModel
-                {
-                    Bag = x
-                });
-            });
-
-            AdditionalTreasures = new ObservableCollection<AdditionalTreasureViewModel>();
-            foreach (var kvp in bagConfiguration.AdditionalTreasures)
-            {
-                var prefix = kvp.Key[..2];
-
-                var name = kvp.Key;
-                var type = EType.None;
-
-                switch (prefix)
-                {
-                    case "I_":
-                        name = kvp.Key[2..];
-                        type = EType.Item;
-                        break;
-
-                    case "T_":
-                        name = kvp.Key[2..];
-                        type = EType.TreasureTable;
-                        break;
-                }
-
-                AdditionalTreasures.Add(new AdditionalTreasureViewModel
-                {
-                    DisplayName = name,
-                    Type = type,
-                    Amount = kvp.Value.GetValue<int>()
-                });
-            }
-
-            AlignGeneratedItemIconsRight = bagConfiguration.AlignGeneratedItemIconsRight;
-
-            TreasureTableFolderName = bagConfiguration.TreasureTable?.FolderName ?? Constants.DEFAULT_TREASURETABLE_FOLDERNAME;
-            TreasureTableName = bagConfiguration.TreasureTable?.Name ?? Constants.DEFAULT_TREASURETABLE_NAME;
-
-            BagColors = new ObservableCollection<string>(Enum.GetNames(typeof(BagConfiguration.EColor)));
-
-            TreasureTypes = new ObservableCollection<string>(Enum.GetNames(typeof(EType)));
-
             InitializeComponent();
 
-            BagsDataGrid.AutoGeneratingColumn += (_, args) =>
+            var assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version!;
+
+            Title += $" v{assemblyVersion.Major}.{assemblyVersion.Minor}.{assemblyVersion.Build}";
+
+            GameObjectControl.AddItemToTreasureTable += itemName =>
             {
-                if (args.PropertyName == nameof(BagViewModel.Bag))
+                var result = MessageBox.Show(
+                    this,
+                    $"Are you sure you want to add '{itemName}' to your Treasure Table?",
+                    "Add Item to Treasure Table",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question
+                ) == MessageBoxResult.Yes;
+
+                if (result)
                 {
-                    args.Cancel = true;
+                    TreasureTableTab.AdditionalTreasures.Add(new AdditionalTreasureViewModel
+                    {
+                        Type = AdditionalTreasureViewModel.EType.Item,
+                        DisplayName = itemName,
+                        Amount = 1
+                    });
                 }
             };
 
@@ -137,73 +51,52 @@ namespace BG3.BagsOfSorting.Views
             {
                 var result = MessageBox.Show(
                     this,
-                    "Do you want to save your bags before closing the application?",
-                    "Save Bags",
+                    "Do you want to save your configuration before closing the application?",
+                    "Save Configuration",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Question
                 ) == MessageBoxResult.Yes;
 
                 if (result)
                 {
-                    CLIMethods.SaveConfiguration(GetBagConfiguration());
+                    CLIMethods.SaveConfiguration(GetConfiguration());
                 }
             };
         }
 
-        private void AddBag(object sender, RoutedEventArgs e)
-        {
-            var bag = CLIMethods.GetNewBag();
-            bag.Name = CLIMethods.GetNameForBag(bag);
-            bag.DisplayName = "Bag";
-
-            Bags.Add(new BagViewModel
-            {
-                Bag = bag
-            });
-        }
-
-        private void RemoveBag(object sender, RoutedEventArgs e)
-        {
-            var result = SelectedBag != null && MessageBox.Show(
-                this, 
-                $"If this bag is in use in-game, your save will become corrupted! Are you sure you want to remove '{SelectedBag.DisplayName}'?",
-                "Remove Bag",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question
-            ) == MessageBoxResult.Yes;
-
-            if (!result)
-            {
-                return;
-            }
-
-            Bags.Remove(SelectedBag);
-        }
-
         private void OpenContentDirectory(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer", Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Content")));
+            Process.Start("explorer", Path.GetFullPath(
+                Path.Combine(Directory.GetCurrentDirectory(), "Content")
+            ));
         }
 
         private void OpenOutputDirectory(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer", Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Output")));
+            Process.Start("explorer", Path.GetFullPath(
+                Path.Combine(Directory.GetCurrentDirectory(), "Output")
+            ));
         }
 
         private void OpenModsDirectory(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer", Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Larian Studios", "Baldur's Gate 3", "Mods")));
+            Process.Start("explorer", Path.GetFullPath(
+                Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
+                    "Larian Studios", "Baldur's Gate 3", "Mods"
+                )
+            ));
         }
 
         private void GeneratePAK(object sender, RoutedEventArgs e)
         {
-            _selectedBag?.Update();
-            _selectedAdditionalTreasure?.Update();
+            BagsTab.Update();
+            TreasureTableTab.Update();
 
             var result = MessageBox.Show(
                 this,
-                "Generating bags will save your current configuration, overwriting the old one. Is that okay?",
-                "Generate Bags",
+                "Generating a PAK will save your current configuration, overwriting the old one. Do you want to continue?",
+                "Generate PAK",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question
             ) == MessageBoxResult.Yes;
@@ -213,7 +106,7 @@ namespace BG3.BagsOfSorting.Views
                 return;
             }
 
-            result = GUIMethods.GenerateBags(GetBagConfiguration(), out var logs);
+            result = GUIMethods.GeneratePAK(GetConfiguration(), out var logs);
 
             var logText = string.Empty;
 
@@ -246,7 +139,20 @@ namespace BG3.BagsOfSorting.Views
 
         private void ExportIcons(object sender, RoutedEventArgs e)
         {
-            var result = GUIMethods.ExportAtlasIcons(out var logs);
+            var messageBoxResult = MessageBox.Show(
+                this,
+                "Exporting icons may take a while, consume 1GB of memory and it will cause the application to freeze in the meantime. Do you want to continue?",
+                "Export Icons",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question
+            );
+
+            if (messageBoxResult != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            var result = GUIMethods.ExportAtlasIcons(GetConfiguration(), out var logs);
 
             var logText = string.Empty;
 
@@ -277,113 +183,77 @@ namespace BG3.BagsOfSorting.Views
             }
         }
 
-        private void BrowseItemIcon(object sender, RoutedEventArgs e)
+        private void IndexPAK(object sender, RoutedEventArgs e)
         {
-            if (SelectedBag == null)
-            {
-                return;
-            }
-
-            var result = BrowseIcon(SelectedBag.Bag.ItemIcon?.Custom ?? false);
-
-            if (result == null)
-            {
-                return;
-            }
-
-            SelectedBag.Bag.ItemIcon ??= new BagConfiguration.Icon();
-            SelectedBag.Bag.ItemIcon.Name = result;
-
-            SelectedBag.Update();
-        }
-
-        private void BrowseToolTipIcon(object sender, RoutedEventArgs e)
-        {
-            if (SelectedBag == null)
-            {
-                return;
-            }
-
-            var result = BrowseIcon(SelectedBag.Bag.TooltipIcon?.Custom ?? false);
-
-            if (result == null)
-            {
-                return;
-            }
-
-            SelectedBag.Bag.TooltipIcon ??= new BagConfiguration.Icon();
-            SelectedBag.Bag.TooltipIcon.Name = result;
-
-            SelectedBag.Update();
-        }
-
-        private void AddAdditionalTreasure(object sender, RoutedEventArgs e)
-        {
-            AdditionalTreasures.Add(new AdditionalTreasureViewModel
-            {
-                Amount = 1
-            });
-        }
-
-        private void RemoveAdditionalTreasure(object sender, RoutedEventArgs e)
-        {
-            var result = SelectedAdditionalTreasure != null && MessageBox.Show(
+            var messageBoxResult = MessageBox.Show(
                 this,
-                $"Are you sure you want to remove '{SelectedAdditionalTreasure.DisplayName}'?",
-                "Remove Additional Treasure",
+                "Index PAKs may take a while, consume 1GB of memory and it will cause the application to freeze in the meantime. If an index had been generated before, it will be overwritten. Do you want to continue?",
+                "Index PAKs",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question
-            ) == MessageBoxResult.Yes;
+            );
 
-            if (!result)
+            if (messageBoxResult != MessageBoxResult.Yes)
             {
                 return;
             }
 
-            AdditionalTreasures.Remove(SelectedAdditionalTreasure);
-        }
+            var searchIndex = GUIMethods.IndexPAK(GetConfiguration(), out var logs);
 
-        private string BrowseIcon(bool custom)
-        {
-            var openFileDialog = new OpenFileDialog
+            var logText = string.Empty;
+
+            if (logs != null && logs.Any())
             {
-                InitialDirectory = Path.GetFullPath(
-                    custom
-                        ? Constants.CONTENT_CUSTOM_PATH
-                        : Constants.ICONS_OUTPUT_PATH
-                ),
-                Filter = "PNG (*.png)|*.png"
-            };
-
-            var result = openFileDialog.ShowDialog();
-
-            if (result.HasValue && result.Value)
-            {
-                return Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                logText = $"\r\n\r\nThe following was reported:\r\n{string.Join("\r\n", logs.Select(x => $"- {x}"))}";
             }
 
-            return null;
+            if (searchIndex == null)
+            {
+                MessageBox.Show(
+                    this,
+                    $"Failed to index PAKs!{logText}",
+                    "Index PAKs",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+
+                return;
+            }
+
+            MessageBox.Show(
+                this,
+                $"PAKs successfully indexed!{logText}",
+                "Index PAKs",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
+
+            ServiceLocator.SearchIndex = searchIndex;
         }
 
-        private BagConfiguration GetBagConfiguration()
+        private Configuration GetConfiguration()
         {
             var additionalTreasures = new JsonObject();
-            foreach (var additionalTreasure in AdditionalTreasures)
+
+            foreach (var additionalTreasure in TreasureTableTab.AdditionalTreasures)
             {
                 additionalTreasures[additionalTreasure.Name] = additionalTreasure.Amount;
             }
 
-            var bagConfiguration = new BagConfiguration
+            var bagConfiguration = new Configuration
             {
-                Bags = Bags.Select(x => x.Bag).ToList(),
+                Bags = BagsTab.Bags.Select(x => x.Bag).ToList(),
                 AdditionalTreasures = additionalTreasures,
-                AlignGeneratedItemIconsRight = AlignGeneratedItemIconsRight,
-                TreasureTable = new BagConfiguration.TreasureTableData
+                AlignGeneratedItemIconsRight = BagsTab.AlignGeneratedItemIconsRight,
+                BundlePouchOfWonders = BagsTab.BundlePouchOfWonders,
+                TreasureTable = new Configuration.TreasureTableData
                 {
-                    FolderName = TreasureTableFolderName,
-                    Name = TreasureTableName
-                }
+                    FolderName = TreasureTableTab.TreasureTableFolderName,
+                    Name = TreasureTableTab.TreasureTableName
+                },
+                PAKPaths = SearchPAKTab.PAKPaths.ToList()
             };
+
             return bagConfiguration;
         }
 
@@ -392,6 +262,7 @@ namespace BG3.BagsOfSorting.Views
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        // ReSharper disable once UnusedMember.Global
         protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))

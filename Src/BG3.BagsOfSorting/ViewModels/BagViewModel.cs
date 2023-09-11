@@ -7,7 +7,7 @@ namespace BG3.BagsOfSorting.ViewModels
         // ReSharper disable once UnusedMember.Global
         public string Name => Bag.Name;
         public string DisplayName => Bag.DisplayName;
-        public BagConfiguration.Bag Bag { get; set; }
+        public Configuration.Bag Bag { get; set; }
 
         public void Update()
         {

@@ -1,0 +1,5 @@
+treasure itemtypes "Common","Uncommon","Rare","Epic","Legendary","Divine","Unique"
+new treasuretable "POW_TT"
+CanMerge 1
+new subtable "1,1"
+object category "T_Empty",1,0,0,0,0,0,0,0

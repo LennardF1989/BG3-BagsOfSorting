@@ -13,11 +13,11 @@ You will also need the [Pouch of Wonders](https://www.nexusmods.com/baldursgate3
 
 The following commands are available:
 - `--export-atlas-icons` will parse all .LSX files it can find under `Content\Stock`, and try to extract icons from the .DDS files to `Output\Icons`.
-- `--generate-bags` will read the `Content\Bags.json` file and use that information to generate a `BagsOfSorting.pak` in `Output\Bags`.
+- `--generate-pak` will read the `Content\Bags.json` file and use that information to generate a `BagsOfSorting.pak` in `Output`.
 - `--add-bag` will create a new `Content\Bags.json` with 1 empty bag, or will open an existing `Content\Bags.json` and add 1 empty bag to it. Added for convenience, as it removes the need of having to manually generate GUIDs.
 
 ### First-time use
-Run the command `--export-atlas-icons` to prepare your workspace. Then run `--add-bag` to generate an empty `Content\Bags.json`.
+Run the command `--add-bag` to generate an empty `Content\Bags.json`. Open that file in your text editor and update the `IndexPaths` to point to Data-folder of the game. Next, run `--export-atlas-icons` to export all icons from the game assets. You're all set!
 
 ### Adding bags
 Run the command `--add-bag` to add an additional bag to your `Content\Bags.json`.
@@ -70,7 +70,7 @@ Open the JSON-file in an editor (for example Visual Studio code, but even Notepa
 `Amount` can be set to any value and determines how many bags will be available in the Pouch of Wonders.
 
 ## Generating the PAK
-Run the command `--generate-bags` and the resulting `BagsOfSorting.pak` can be found in `Output\Bags`. The PAK-file will contain a copy of your `Bags.json`, so you are always able the regenerate the exact same file again. This is important, because your save-file can get corrupted if any used bag is no longer available.
+Run the command `--generate-pak` and the resulting `BagsOfSorting.pak` can be found in `Output`. The PAK-file will contain a copy of your `Bags.json`, so you are always able the regenerate the exact same file again. This is important, because your save-file can get corrupted if any used bag is no longer available.
 
 ## Installing the PAK
 The PAK-file has to be dropped directly into `Baldurs Gate 3\Data` and will just work, even on existing playthoughs.
@@ -96,17 +96,23 @@ This will give you access to all items in the Tutorial Chest (*) and 2 shovels.
 ## Additional functionality: Generate a standalone mod
 If you do not want to use Pouch of Wonders, because you are already using something else, the GUI now has the possibility to generate a standalone mod to work with the game. 
 
-Simply changes the `Folder`-value in the `Treasure Table`-tab to something other than `PouchOfWonders`. Set the `Name`-value to your desired TreasureTable, for example `T_TUT_Chest_Potions` for the Tutorial Chest.
+Simply changes the `Folder`-value in the `Treasure Table`-tab to something other than `PouchOfWonders`. Set the `Name`-value to your desired TreasureTable, for example `TUT_Chest_Potions` for the Tutorial Chest.
 
 ## Additional functionality: Flip the generated icons
 It is possible to flip the generated icons from left to right by setting `AlignGeneratedItemIconsRight` to `true` in the `Content\Bags.json`. It is however not recommended to do this when you use generated icons. This is because in-game the amount of items in a pouch is shown the upper-right corner, and hide the visual cue to Item icons are meant to provide.
+
+## Additional functionaly: Search for items
+It's possible to search for items in all of the game files and your mods. Simply press the "Index PAKs"-button and wait for it to be done. 
+
+Next head over the the "Search PAKs"-tab, and you can search for items by a part of their name. Keep in mind that the query is searched as a whole, best results are probably achieved by searching for single words.
+
+For your convenience, after clicking a Game Object, you can press the "Add"-button to immediately add it to your Treasure Table.
 
 ## License
 License is purposely set to LGPL-2.1 to encourage pull requests with useful changes, while still allowing the tool to be used in other solutions that don't share the same license. Just be sure to give credits where credits are due.
 
 ## Dependencies
-- Icons from Baldur's Gate 3 itself, but they are included under Fair Use for your convenience.
 - [.NET 6 version](https://github.com/LennardF1989/lslib/tree/dotnet6) of [LSLib](https://github.com/Norbyte/lslib) to create LXS-, LOCA- and PAK-files.
 - [Pfim](https://github.com/nickbabcock/Pfim) to read from DDS-files.
-- [Texconv](https://github.com/Microsoft/DirectXTex/) to convert to DDS-files.
+- [Cross-platform version](https://github.com/matyalatte/Texconv-Custom-DLL) of [Texconv](https://github.com/Microsoft/DirectXTex/) to convert PNG-files to DDS-files.
 - [ImageSharp](https://github.com/SixLabors/ImageSharp) to manipulate the images.

@@ -1,1 +1,0 @@
-BG3.BagsOfSorting.exe --generate-bags
