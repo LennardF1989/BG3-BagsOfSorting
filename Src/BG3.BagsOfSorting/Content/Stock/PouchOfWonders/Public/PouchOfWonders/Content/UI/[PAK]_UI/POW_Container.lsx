@@ -9,7 +9,7 @@
 					<attribute id="Localized" type="bool" value="False" />
 					<attribute id="Name" type="LSString" value="POW_Container" />
 					<attribute id="SRGB" type="bool" value="True" />
-					<attribute id="SourceFile" type="LSString" value="Public/GustavDev/Assets/Textures/Icons/POW_Container.dds" />
+					<attribute id="SourceFile" type="LSString" value="Public/PouchOfWonders/Assets/Textures/Icons/POW_Container.dds" />
 					<attribute id="Streaming" type="bool" value="True" />
 					<attribute id="Template" type="FixedString" value="POW_Container" />
 					<attribute id="Type" type="int64" value="0" />

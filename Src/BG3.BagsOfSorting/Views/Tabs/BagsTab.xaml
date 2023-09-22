@@ -46,7 +46,7 @@
                         <TextBlock>
                             When enabled, the Pouch of Wonders will be included in the generated PAK.<LineBreak/>
                             <LineBreak/>
-                            It is recommended not to enabled this if you plan on redistributing your custom bags to not force players into using Pouch of Wonders.
+                            It is recommended not to enable this if you plan on redistributing your custom bags to not force players into using Pouch of Wonders.
                         </TextBlock>
                     </CheckBox.ToolTip>
                 </CheckBox>

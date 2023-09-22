@@ -57,7 +57,7 @@ Open the JSON-file in an editor (for example Visual Studio code, but even Notepa
 - When `Custom` is set to `true`, the path `Content\Custom` is used instead and a 64x64 PNG-file is expected to be found. 
 - When `Generate` is set to `true`, the icon set under `Name` will shrunk to two-thirds of its size and be combined with the icon of a normal pouch.
 
-`TooltipIcon` works exactly the same as `ItemIcon`. However, it is recommended use a 380x380 PNG-file when `Custom` is set to `true` and `Generate` is set to `false`. This will give the best results in-game.
+`TooltipIcon` works exactly the same as `ItemIcon`. However, it is recommended to use a 380x380 PNG-file when `Custom` is set to `true` and `Generate` is set to `false`. This will give the best results in-game.
 
 `Color` determines how the item is presented in-game. The following values are available:
 - None

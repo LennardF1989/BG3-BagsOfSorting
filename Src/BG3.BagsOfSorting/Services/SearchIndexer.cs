@@ -240,7 +240,16 @@ namespace BG3.BagsOfSorting.Services
 
             foreach (var abstractFileInfo in tagFiles)
             {
-                var resource = abstractFileInfo.ReadResource();
+                Resource resource;
+
+                try
+                {
+                    resource = abstractFileInfo.ReadResource();
+                }
+                catch
+                {
+                    continue;
+                }
 
                 var result = resource?.Regions
                     ?.Get("Tags");
@@ -273,9 +282,16 @@ namespace BG3.BagsOfSorting.Services
 
             foreach (var abstractFileInfo in rootTemplateFiles)
             {
-                using var stream = abstractFileInfo.MakeStream();
+                Resource resource;
 
-                var resource = abstractFileInfo.ReadResource();
+                try
+                {
+                    resource = abstractFileInfo.ReadResource();
+                }
+                catch
+                {
+                    continue;
+                }
 
                 var gameObjects = resource?.Regions
                     ?.Get("Templates")?.Children

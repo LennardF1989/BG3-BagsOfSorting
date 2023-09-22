@@ -5,6 +5,7 @@ namespace BG3.BagsOfSorting
     public static class Constants
     {
         public const string DEFAULT_TREASURETABLE_FOLDERNAME = "PouchOfWonders";
+        public const string DEFAULT_TREASURETABLE_FOLDERNAME_STANDALONE = "BagsOfSorting";
         public const string DEFAULT_TREASURETABLE_NAME = "POW_TT";
 
         public const string BASE_ICON = "Item_LOOT_Bag_Blackpowder";

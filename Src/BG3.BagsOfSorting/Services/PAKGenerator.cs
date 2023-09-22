@@ -58,9 +58,12 @@ namespace BG3.BagsOfSorting.Services
 					<attribute id=""TechnicalDescription"" type=""TranslatedString"" handle=""{4}"" version=""1"" />
 					<attribute id=""Icon"" type=""FixedString"" value=""{1}"" />
 					<attribute id=""Stats"" type=""FixedString"" value=""{1}"" />
-                    <attribute id=""StoryItem"" type=""bool"" value=""{5}"" />
+					<attribute id=""StoryItem"" type=""bool"" value=""{5}"" />
 					<attribute id=""ContainerAutoAddOnPickup"" type=""bool"" value=""{6}"" />
 					<attribute id=""ContainerContentFilterCondition"" type=""LSString"" value=""{7}"" />
+					<children>
+						<node id=""InventoryList"" />
+					</children>
 				</node>
 			</children>
 		</node>
@@ -121,7 +124,7 @@ data ""Rarity"" ""{2}""
 					<attribute id=""Localized"" type=""bool"" value=""False"" />
 					<attribute id=""Name"" type=""LSString"" value=""{0}"" />
 					<attribute id=""SRGB"" type=""bool"" value=""True"" />
-					<attribute id=""SourceFile"" type=""LSString"" value=""Public/GustavDev/Assets/Textures/Icons/{0}.dds"" />
+					<attribute id=""SourceFile"" type=""LSString"" value=""Public/{2}/Assets/Textures/Icons/{0}.dds"" />
 					<attribute id=""Streaming"" type=""bool"" value=""True"" />
 					<attribute id=""Template"" type=""FixedString"" value=""{0}"" />
 					<attribute id=""Type"" type=""int64"" value=""0"" />
@@ -187,13 +190,8 @@ object category ""{0}"",1,0,0,0,0,0,0,0
 
         private static readonly string BAGS_OUTPUT_PATH = Path.Combine(Constants.OUTPUT_PATH, "Bags");
         private static readonly string BAGS_OUTPUT_PATH_REMOVED = Path.Combine(Constants.OUTPUT_PATH, "Bags_Removed");
-        private static readonly string ICON_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "GustavDev", "Assets", "Textures", "Icons");
         private static readonly string TOOLTIP_ICON_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "Game", "GUI", "Assets", "Tooltips", "ItemIcons");
         private static readonly string CONTROLLER_ICON_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "Game", "GUI", "Assets", "ControllerUIIcons", "items_png");
-        private static readonly string ROOTTEMPLATES_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "GustavDev", "RootTemplates");
-        private static readonly string DATA_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "GustavDev", "Stats", "Generated", "Data");
-        private static readonly string ATLAS_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "GustavDev", "GUI");
-        private static readonly string TEXTUREBANK_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Public", "GustavDev", "Content", "UI", "[PAK]_UI");
         private static readonly string LOCALIZATION_PATH = Path.Combine(BAGS_OUTPUT_PATH, "Localization", "English");
 
         private static readonly ResizeOptions _itemIconResizeOptions = new()
@@ -221,7 +219,7 @@ object category ""{0}"",1,0,0,0,0,0,0,0
             BundlePouchOfWonders(context);
             GenerateBags(context);
             GenerateTreasureTable(context);
-            CreatePackage(BAGS_OUTPUT_PATH, Constants.OUTPUT_PATH);
+            CreatePackage(context, BAGS_OUTPUT_PATH, Constants.OUTPUT_PATH);
         }
 
         private static void GenerateTreasureTable(Context context)
@@ -246,13 +244,11 @@ object category ""{0}"",1,0,0,0,0,0,0,0
                 treasureTablePath
             );
 
-            //If the TreasureTable-folder is different from the default value, we need to generate a meta.lsx to load it
-            if (context.Configuration.TreasureTable != null &&
-                context.Configuration.TreasureTable.FolderName != Constants.DEFAULT_TREASURETABLE_FOLDERNAME
-               )
+            //NOTE: If the TreasureTable-folder is different from the default value, we need to generate a meta.lsx to load it.
+            if (context.Configuration.TreasureTable.FolderName != Constants.DEFAULT_TREASURETABLE_FOLDERNAME)
             {
                 GenerateModsMeta(
-                    context.Configuration.TreasureTable.FolderName, 
+                    context.Configuration.TreasureTable.FolderName,
                     $"Bags of Sorting - {context.Configuration.TreasureTable.FolderName}"
                 );
             }
@@ -264,6 +260,9 @@ object category ""{0}"",1,0,0,0,0,0,0,0
             {
                 return;
             }
+
+            //NOTE: Override the Mod-folder
+            context.Configuration.TreasureTable.FolderName = Constants.DEFAULT_TREASURETABLE_FOLDERNAME;
 
             var sourceDirectory = new DirectoryInfo(Constants.CONTENT_POW_PATH);
             var targetDirectory = new DirectoryInfo(BAGS_OUTPUT_PATH);
@@ -278,13 +277,20 @@ object category ""{0}"",1,0,0,0,0,0,0,0
                 return;
             }
 
-            Directory.CreateDirectory(ICON_PATH);
+            var modFolder = context.Configuration.TreasureTable.FolderName;
+            var iconPath = Path.Combine(BAGS_OUTPUT_PATH, "Public", modFolder, "Assets", "Textures", "Icons");
+            var rootTemplatesPath = Path.Combine(BAGS_OUTPUT_PATH, "Public", modFolder, "RootTemplates");
+            var dataPath = Path.Combine(BAGS_OUTPUT_PATH, "Public", modFolder, "Stats", "Generated", "Data");
+            var atlasPath = Path.Combine(BAGS_OUTPUT_PATH, "Public", modFolder, "GUI");
+            var textureBankPath = Path.Combine(BAGS_OUTPUT_PATH, "Public", modFolder, "Content", "UI", "[PAK]_UI");
+
+            Directory.CreateDirectory(iconPath);
             Directory.CreateDirectory(TOOLTIP_ICON_PATH);
             Directory.CreateDirectory(CONTROLLER_ICON_PATH);
-            Directory.CreateDirectory(ROOTTEMPLATES_PATH);
-            Directory.CreateDirectory(DATA_PATH);
-            Directory.CreateDirectory(ATLAS_PATH);
-            Directory.CreateDirectory(TEXTUREBANK_PATH);
+            Directory.CreateDirectory(rootTemplatesPath);
+            Directory.CreateDirectory(dataPath);
+            Directory.CreateDirectory(atlasPath);
+            Directory.CreateDirectory(textureBankPath);
             Directory.CreateDirectory(LOCALIZATION_PATH);
 
             //Include a backup of the Bags.json in the PAK
@@ -307,26 +313,21 @@ object category ""{0}"",1,0,0,0,0,0,0,0
             {
                 try
                 {
-                    GenerateBag(context, bag);
+                    bag.Name = CLIMethods.GetNameForBag(bag);
+
+                    GenerateLocalization(bag, LOCALIZATION_PATH);
+                    GenerateItemIcon(context, bag, iconPath);
+                    GenerateTooltipIcon(context, bag, TOOLTIP_ICON_PATH, CONTROLLER_ICON_PATH);
+                    GenerateRootTemplate(bag, rootTemplatesPath);
+                    GenerateData(bag, dataPath);
+                    GenerateAtlas(bag, atlasPath);
+                    GenerateTextureBank(bag, textureBankPath, modFolder);
                 }
                 catch (Exception ex)
                 {
                     context.LogMessage($"[{bag.Name} | Error] Unhandled exception: {ex.Message}");
                 }
             }
-        }
-
-        private static void GenerateBag(Context context, Configuration.Bag bag)
-        {
-            bag.Name = CLIMethods.GetNameForBag(bag);
-
-            GenerateLocalization(bag, LOCALIZATION_PATH);
-            GenerateItemIcon(context, bag, ICON_PATH);
-            GenerateTooltipIcon(context, bag, TOOLTIP_ICON_PATH, CONTROLLER_ICON_PATH);
-            GenerateRootTemplate(bag, ROOTTEMPLATES_PATH);
-            GenerateData(bag, DATA_PATH);
-            GenerateAtlas(bag, ATLAS_PATH);
-            GenerateTextureBank(bag, TEXTUREBANK_PATH);
         }
 
         private static void GenerateLocalization(Configuration.Bag bag, string outputPath)
@@ -605,12 +606,13 @@ object category ""{0}"",1,0,0,0,0,0,0,0
             ConvertLSXToLSF(contents, lsxPath, lsfPath);
         }
 
-        private static void GenerateTextureBank(Configuration.Bag bag, string outputPath)
+        private static void GenerateTextureBank(Configuration.Bag bag, string outputPath, string modFolder)
         {
             var contents = string.Format(
                 TEXTUREBANK_FORMAT,
                 bag.Name,
-                bag.MapKey
+                bag.MapKey,
+                modFolder
             );
 
             var lsxPath = Path.Combine(outputPath, $"{bag.Name}.lsx");
@@ -677,16 +679,25 @@ object category ""{0}"",1,0,0,0,0,0,0,0
             ConvertLSXToLSF(contents, lsxPath, lsfPath);
         }
 
-        private static void CreatePackage(string inputPath, string outputPath)
+        private static void CreatePackage(Context context, string inputPath, string outputPath)
         {
             var packager = new Packager();
 
+            var containsModsMeta = context.Configuration.BundlePouchOfWonders ||
+                                   context.Configuration.TreasureTable.FolderName != Constants.DEFAULT_TREASURETABLE_FOLDERNAME;
+
+            var pakName = containsModsMeta
+                ? $"BagsOfSorting_{context.Configuration.TreasureTable.FolderName}.pak"
+                : "BagsOfSorting.pak";
+
             packager.CreatePackage(
-                Path.GetFullPath(Path.Combine(outputPath, "BagsOfSorting.pak")),
+                Path.GetFullPath(Path.Combine(outputPath, pakName)),
                 Path.GetFullPath(inputPath),
                 new PackageCreationOptions
                 {
-                    Priority = byte.MaxValue,
+                    Priority = containsModsMeta
+                        ? (byte)0
+                        : byte.MaxValue,
                     Version = PackageVersion.V18,
                     Compression = CompressionMethod.LZ4
                 }
@@ -701,6 +712,7 @@ object category ""{0}"",1,0,0,0,0,0,0,0
                 Configuration.EColor.Blue => "Rare",
                 Configuration.EColor.Pink => "VeryRare",
                 Configuration.EColor.Gold => "Legendary",
+                Configuration.EColor.Orange => "",
                 _ => "Common"
             };
         }
