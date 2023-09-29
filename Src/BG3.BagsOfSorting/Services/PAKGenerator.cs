@@ -224,11 +224,6 @@ object category ""{0}"",1,0,0,0,0,0,0,0
 
         private static void GenerateTreasureTable(Context context)
         {
-            if (context.Configuration.AdditionalTreasures.Count <= 0)
-            {
-                return;
-            }
-
             var treasureTablePath = Path.Combine(
                 BAGS_OUTPUT_PATH,
                 "Public",

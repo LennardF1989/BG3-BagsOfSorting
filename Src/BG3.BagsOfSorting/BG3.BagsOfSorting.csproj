@@ -10,7 +10,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Title>BG3 - Bags of Sorting</Title>
-    <Version>1.4.1</Version>
+    <Version>1.4.2</Version>
     <Authors>Lennard Fonteijn</Authors>
     <Copyright>Copyright © 2023 Lennard Fonteijn</Copyright>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
